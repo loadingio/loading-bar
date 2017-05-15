@@ -15,7 +15,7 @@ Example
 Usage
 =============
 
-download and include the required [JS](http://localhost/js/progress/loading-bar.js) and [CSS](http://localhost/js/loading-bar.css) files:
+download and include the required [JS](https://raw.githubusercontent.com/loadingio/loading-bar/master/dist/loading-bar.js) and [CSS](https://raw.githubusercontent.com/loadingio/loading-bar/master/dist/loading-bar.css) files:
 
     <link rel="stylesheet" type="text/css" href="loading-bar.css"/>
     <script type="text/javascript" src="loading-bar.js"><script>
