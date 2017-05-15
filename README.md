@@ -8,6 +8,8 @@ loading-Bar is a highly flexible, open sourced progress bar library based on SVG
 Example
 =============
 
+![progress bar sample](https://raw.githubusercontent.com/loadingio/loading-bar/master/img/sample.gif)
+
 
 
 Usage
