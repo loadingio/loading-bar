@@ -354,5 +354,7 @@
 
     @set (+config.value or 0), false
     @
-  Array.from(document.querySelectorAll(\.ldBar)).forEach -> it.ldBar = new ldBar it
+  window.addEventListener \load, (->
+    Array.from(document.querySelectorAll(\.ldBar)).forEach -> it.ldBar = new ldBar it
+  ), false
 )!
