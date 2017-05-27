@@ -4,7 +4,10 @@ var slice$ = [].slice;
   var make, handler, preset, ldBar;
   make = {
     head: function(viewBox){
-      return "data:image/svg+xml,<?xml version=\"1.0\"?><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"" + viewBox + "\">";
+      return "<?xml version=\"1.0\" encoding=\"utf-8\"?><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"" + viewBox + "\">";
+    },
+    wrap: function(content){
+      return "data:image/svg+xml;base64," + btoa(content);
     },
     gradient: function(dir, dur){
       var colors, ret, len, x, y, i$, i, idx;
@@ -23,7 +26,7 @@ var slice$ = [].slice;
         ret.push("<stop offset=\"" + idx + "%\" stop-color=\"" + colors[i % colors.length] + "\"/>");
       }
       ret.push(["</linearGradient></defs>", "<rect x=\"0\" y=\"0\" width=\"180\" height=\"100\" fill=\"url(#gradient)\">", "<animateTransform attributeName=\"transform\" type=\"translate\" from=\"-" + x * 30 + ",-" + y * 16.7 + "\" ", "to=\"" + x * 30 + "," + y * 16.7 + "\" dur=\"" + dur + "s\" repeatCount=\"indefinite\"/></rect></svg>"].join(""));
-      return ret.join("");
+      return this.wrap(ret.join(""));
     },
     stripe: function(c1, c2, dur){
       var ret, i;
@@ -41,7 +44,7 @@ var slice$ = [].slice;
           return results$;
         }()).join(""), "</g><animateTransform attributeName=\"transform\" type=\"translate\" ", "from=\"0,0\" to=\"20,0\" dur=\"" + dur + "s\" repeatCount=\"indefinite\"/></g></svg>"
       ].join(""));
-      return ret;
+      return this.wrap(ret);
     },
     bubble: function(c1, c2, count, dur){
       var ret, i$, i, idx, x, r;
@@ -57,7 +60,7 @@ var slice$ = [].slice;
         r = Math.random() * 6 + 2;
         ret.push(["<circle cx=\"" + x + "\" cy=\"0\" r=\"" + r + "\" fill=\"none\" stroke=\"" + c2 + "\" stroke-width=\"1\">", "<animate attributeName=\"cy\" values=\"208;-8\" times=\"0;1\" ", "dur=\"" + dur * (1 + Math.random() * 0.5) + "s\" begin=\"" + idx + "s\" repeatCount=\"indefinite\"/>", "</circle>"].join(""));
       }
-      return ret.join("") + "</svg>";
+      return this.wrap(ret.join("") + "</svg>");
     }
   };
   handler = {
@@ -181,8 +184,11 @@ var slice$ = [].slice;
     }
   };
   window.ldBar = ldBar = function(selector, option){
-    var root, that, cls, id, domTree, newNode, x$, config, k, v, isStroke, parseRes, dom, svg, text, group, length, path0, path1, patimg, this$ = this;
+    var xmlns, root, that, cls, id, domTree, newNode, x$, config, k, v, isStroke, parseRes, dom, svg, text, group, length, path0, path1, patimg, this$ = this;
     option == null && (option = {});
+    xmlns = {
+      xlink: "http://www.w3.org/1999/xlink"
+    };
     root = typeof selector === typeof "" ? document.querySelector(selector) : selector;
     if (that = root.ldBar) {
       return that;
@@ -220,10 +226,15 @@ var slice$ = [].slice;
       return this.appendChild(document.createTextNode(t));
     };
     x$.attrs = function(o){
-      var k, v, results$ = [];
+      var k, v, ret, results$ = [];
       for (k in o) {
         v = o[k];
-        results$.push(this.setAttribute(k, v));
+        ret = /([^:]+):([^:]+)/.exec(k);
+        if (!ret || !xmlns[ret[1]]) {
+          results$.push(this.setAttribute(k, v));
+        } else {
+          results$.push(this.setAttributeNS(xmlns[ret[1]], k, v));
+        }
       }
       return results$;
     };
@@ -333,8 +344,10 @@ var slice$ = [].slice;
           },
           image: {
             attr: {
-              href: config.img,
-              filter: "url(#" + id.filter + ")"
+              "xlink:href": config.img,
+              filter: "url(#" + id.filter + ")",
+              width: "100%",
+              height: "100%"
             }
           }
         },
@@ -359,16 +372,24 @@ var slice$ = [].slice;
           },
           rect: {
             attr: {
-              'class': 'mask'
+              'class': 'mask',
+              fill: '#000'
             }
           }
         },
         pattern: {
           attr: {
             id: id.pattern,
-            patternUnits: 'userSpaceOnUse'
+            patternUnits: 'userSpaceOnUse',
+            width: 100,
+            height: 100
           },
-          image: {}
+          image: {
+            attr: {
+              width: '100%',
+              height: '100%'
+            }
+          }
         }
       }
     };
@@ -465,11 +486,11 @@ var slice$ = [].slice;
           height: box.height
         });
       });
-      if (/.+\..+/.exec(!isStroke
+      if (/.+\..+|^data:/.exec(!isStroke
         ? config.fill
         : config.stroke)) {
         patimg.attrs({
-          href: !isStroke
+          "xlink:href": !isStroke
             ? config.fill
             : config.stroke
         });
@@ -481,14 +502,14 @@ var slice$ = [].slice;
         });
         path1.attrs({
           "stroke-width": config["stroke-width"],
-          stroke: /.+\..+/.exec(config.stroke)
+          stroke: /.+\..+|^data:/.exec(config.stroke)
             ? "url(#" + id.pattern + ")"
             : config.stroke
         });
       }
       if (config.fill && !isStroke) {
-        path1.styles({
-          fill: /.+\..+/.exec(config.fill)
+        path1.attrs({
+          fill: /.+\..+|^data:/.exec(config.fill)
             ? "url(#" + id.pattern + ")"
             : config.fill
         });
@@ -512,7 +533,9 @@ var slice$ = [].slice;
       group[1] = domTree('g', {
         image: {
           attr: {
-            href: config.img,
+            width: '100%',
+            height: '100%',
+            "xlink:href": config.img,
             'class': 'solid',
             "clip-path": config.type === 'fill' ? "url(#" + id.clip + ")" : ''
           }
@@ -613,7 +636,7 @@ var slice$ = [].slice;
           'class': node.attr('class') + ' notransition'
         });
       }
-      node.styles(style);
+      node.attrs(style);
       if (!doTransition) {
         svg.parentNode.offsetHeight;
       }

@@ -1,6 +1,7 @@
 (->
   make = do
-    head: (viewBox) -> """data:image/svg+xml,<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="#viewBox">"""
+    head: (viewBox) -> """<?xml version="1.0" encoding="utf-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="#viewBox">"""
+    wrap: (content) -> "data:image/svg+xml;base64," + btoa(content)
     gradient: (dir = 45, dur = 1, ...colors) ->
       ret = [@head "60 33.3 60 33.3"]
       len = colors.length * 3 + 1
@@ -17,7 +18,7 @@
         """<animateTransform attributeName="transform" type="translate" from="-#{x * 30},-#{y * 16.7}" """
         """to="#{x * 30},#{y * 16.7}" dur="#{dur}s" repeatCount="indefinite"/></rect></svg>"""
       ].join("")
-      ret.join("")
+      @wrap ret.join("")
     stripe: (c1=\#b4b4b4, c2=\#e6e6e6, dur = 1) ->
       ret = [@head "0 0 200 100"]
       ret ++= [
@@ -29,7 +30,7 @@
         """</g><animateTransform attributeName="transform" type="translate" """
         """from="0,0" to="20,0" dur="#{dur}s" repeatCount="indefinite"/></g></svg>"""
       ].join("")
-      ret
+      @wrap ret
     bubble: (c1 = \#39d, c2 = \#9cf, count = 10, dur = 1) ->
       ret = [@head("0 0 200 200"), """<rect x="0" y="0" width="200" height="200" fill="#c1"/>"""]
       for i from 0 til count =>
@@ -42,9 +43,7 @@
           """dur="#{dur * (1 + Math.random! * 0.5)}s" begin="#{idx}s" repeatCount="indefinite"/>"""
           """</circle>"""
         ].join("")
-      ret.join("") + "</svg>"
-
-
+      @wrap(ret.join("") + "</svg>")
 
   handler = do
     queue: {}
@@ -139,6 +138,7 @@
       "stroke-trail-width": 0.5
 
   window.ldBar = ldBar = (selector, option = {}) ->
+    xmlns = xlink: "http://www.w3.org/1999/xlink"
     root = if typeof(selector) == typeof("") => document.querySelector selector else selector
     if root.ldBar => return that
     cls = root.getAttribute(\class)
@@ -159,7 +159,10 @@
     newNode = (n) -> document.createElementNS "http://www.w3.org/2000/svg", n
     document.body.__proto__.__proto__.__proto__
       ..text = (t) -> @appendChild document.createTextNode(t)
-      ..attrs = (o) -> for k,v of o => @setAttribute k, v
+      ..attrs = (o) -> for k,v of o =>
+        ret = /([^:]+):([^:]+)/.exec(k)
+        if !ret or !xmlns[ret.1] => @setAttribute k, v
+        else @setAttributeNS xmlns[ret.1], k, v
       ..styles = (o) -> for k,v of o => @style[k] = v
       ..append = (n) -> @appendChild r = document.createElementNS "http://www.w3.og/2000/svg", n
       ..attr = (n,v) -> if v? => @setAttribute n, v else @getAttribute n
@@ -209,8 +212,10 @@
         mask: do
           attr: id: id.mask
           image: attr: do
-            href: config.img
+            "xlink:href": config.img
             filter: "url(\##{id.filter})"
+            width: "100%"
+            height: "100%"
 
         g: do
           mask: do
@@ -223,10 +228,11 @@
 
         clipPath: do
           attr: id: id.clip
-          rect: {attr: class: \mask}
+          rect: {attr: class: \mask, fill: \#000}
         pattern: do
-          attr: id: id.pattern, patternUnits: \userSpaceOnUse
-          image: {}
+          attr: id: id.pattern, patternUnits: \userSpaceOnUse, width: 100, height: 100
+          image: attr: do
+            width: \100%, height: \100%
 
     svg = domTree \svg, dom
     text = document.createElement \div
@@ -260,7 +266,7 @@
 
       svg.appendChild group.0
       group.1 = domTree \g, path: attr: do
-        d: config.path, class: if is-stroke => \mainline else \solid,
+        d: config.path, class: if is-stroke => \mainline else \solid
         "clip-path": if config.type == \fill => "url(\##{id.clip})" else ''
       svg.appendChild group.1
       path0 = group.0.querySelector (if is-stroke => \path else \rect)
@@ -272,17 +278,17 @@
         box = patimg.getBBox!
         svg.querySelector \pattern .attrs {width: box.width, height: box.height}
         patimg.attrs {width: box.width, height: box.height}
-      if /.+\..+/.exec(if !is-stroke => config.fill else config.stroke) =>
-        patimg.attrs href: if !is-stroke => config.fill else config.stroke
+      if /.+\..+|^data:/.exec(if !is-stroke => config.fill else config.stroke) =>
+        patimg.attrs "xlink:href": if !is-stroke => config.fill else config.stroke
 
       if is-stroke =>
         path0.attrs stroke: config["stroke-trail"], "stroke-width": config["stroke-trail-width"]
         path1.attrs do
           "stroke-width": config["stroke-width"]
-          stroke: if /.+\..+/.exec(config.stroke) => "url(\##{id.pattern})" else config.stroke
+          stroke: if /.+\..+|^data:/.exec(config.stroke) => "url(\##{id.pattern})" else config.stroke
       if config.fill and !is-stroke =>
-        path1.styles do
-          fill: if /.+\..+/.exec(config.fill) => "url(\##{id.pattern})" else config.fill
+        path1.attrs do
+          fill: if /.+\..+|^data:/.exec(config.fill) => "url(\##{id.pattern})" else config.fill
 
       length = path1.getTotalLength!
       @fit!
@@ -291,7 +297,8 @@
       group.0 = domTree \g, rect: attr: do
         x: 0, y: 0, width: \100%, height: \100%, mask: "url(\##{id.mask})", fill: config["fill-background"]
       group.1 = domTree \g, image: attr: do
-        href: config.img, class: \solid
+        width: \100%, height: \100%
+        "xlink:href": config.img, class: \solid
         "clip-path": if config.type == \fill => "url(\##{id.clip})" else ''
       group.1.querySelector \image .addEventListener \load, ~>
         @fit!
@@ -347,7 +354,7 @@
           width: box.width * v * 0.01
         node = svg.querySelector \rect
       if !doTransition => node.attrs class: node.attr(\class) + ' notransition'
-      node.styles style
+      node.attrs style
       if !doTransition => svg.parentNode.offsetHeight
       if !doTransition => node.attrs class: node.attr(\class).replace(/notransition/g,'').trim!
       @transition.start src, des
