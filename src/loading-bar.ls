@@ -155,7 +155,7 @@
     root = if typeof(selector) == typeof("") => document.querySelector selector else selector
     if root.ldBar => return that
     cls = root.getAttribute(\class) or ''
-    if !cls.indexOf('ldBar') => root.setAttribute \class, "#cls ldBar"
+    if !~cls.indexOf('ldBar') => root.setAttribute \class, "#cls ldBar"
     id = "ldBar-#{Math.random!toString 16 .substring 2}"
     id = do
       key: id
