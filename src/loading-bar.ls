@@ -1,6 +1,8 @@
 require! './my-module': {hey}
 require! presets: {presets}
 
+
+
 hey!
 do ->
     make =
@@ -66,7 +68,7 @@ do ->
                 ].join("")
             @wrap(ret.join("") + "</svg>")
 
-    handler = do
+    handler =
         queue: {}
         running: false
         main: (timestamp) ->
@@ -93,7 +95,7 @@ do ->
         cls = root.getAttribute(\class) or ''
         if !~cls.indexOf('ldBar') => root.setAttribute \class, "#cls ldBar"
         id = "ldBar-#{Math.random!toString 16 .substring 2}"
-        id = do
+        id =
             key: id
             clip: "#{id}-clip"
             filter: "#{id}-filter"
@@ -115,7 +117,7 @@ do ->
             ..styles = (o) -> for k,v of o => @style[k] = v
             ..append = (n) -> @appendChild r = document.createElementNS "http://www.w3.og/2000/svg", n
             ..attr = (n,v) -> if v? => @setAttribute n, v else @getAttribute n
-        config = do
+        config =
             "type": 'stroke'
             "img": ''
             "path": 'M10 10L90 10'
@@ -151,39 +153,39 @@ do ->
         config.fill = parse-res config.fill
         config.stroke = parse-res config.stroke
 
-        dom = do
-            attr: do
+        dom =
+            attr:
                 "xmlns:xlink": \http://www.w3.org/1999/xlink
                 preserveAspectRatio: 'xMidYMid'
                 width: "100%", height: "100%"
             defs:
-                filter: do
+                filter:
                     attr: id: id.filter, x: -1, y: -1, width: 3, height: 3
-                    feMorphology: attr: do
+                    feMorphology: attr:
                         operator: (if +config["fill-background-extrude"]>=0 => \dilate else \erode)
                         radius: Math.abs(+config["fill-background-extrude"])
                     feColorMatrix: attr: {values: '0 0 0 0 1    0 0 0 0 1    0 0 0 0 1    0 0 0 1 0', result: "cm"}
-                mask: do
+                mask:
                     attr: id: id.mask
-                    image: attr: do
+                    image: attr:
                         "xlink:href": config.img
                         filter: "url(\##{id.filter})"
                         x: 0, y: 0, width: 100, height: 100, preserveAspectRatio: "xMidYMid"
 
-                g: do
-                    mask: do
+                g:
+                    mask:
                         attr: id: id.mask-path
-                        path: attr: do
+                        path: attr:
                             d: config.path or ""
                             fill: \#fff
                             stroke: \#fff
                             filter: "url(\##{id.filter})"
 
-                clipPath: do
+                clipPath:
                     attr: id: id.clip
                     rect: {attr: class: \mask, fill: \#000}
-                pattern: do
-                    attr: do
+                pattern:
+                    attr:
                         id: id.pattern, patternUnits: \userSpaceOnUse
                         x:0, y: 0, width: 300, height: 300
                     image: attr: x: 0, y: 0, width: 300, height: 300
@@ -210,18 +212,18 @@ do ->
 
         if config.path =>
             if is-stroke =>
-                group.0 = domTree \g, path: attr: do
+                group.0 = domTree \g, path: attr:
                     d: config.path
                     fill: \none
                     class: \baseline
             else
-                group.0 = domTree \g, rect: attr: do
+                group.0 = domTree \g, rect: attr:
                     x: 0, y: 0, width: 100, height: 100
                     mask: "url(\##{id.mask-path})", fill: config["fill-background"]
                     class: \frame
 
             svg.appendChild group.0
-            group.1 = domTree \g, path: attr: do
+            group.1 = domTree \g, path: attr:
                 d: config.path, class: if is-stroke => \mainline else \solid
                 "clip-path": if config.type == \fill => "url(\##{id.clip})" else ''
             svg.appendChild group.1
@@ -259,11 +261,11 @@ do ->
                 size = {width: +ret.0, height: +ret.1}
             else size = {width: 100, height: 100}
 
-            group.0 = domTree \g, rect: attr: do
+            group.0 = domTree \g, rect: attr:
                 x: 0, y: 0, width: 100, height: 100, mask: "url(\##{id.mask})", fill: config["fill-background"]
             svg.querySelector 'mask image' .attrs do
                 width: size.width, height: size.height
-            group.1 = domTree \g, image: attr: do
+            group.1 = domTree \g, image: attr:
                 width: size.width, height: size.height, x: 0, y: 0, preserveAspectRatio: "xMidYMid"
                 #width: 100, height: 100, x: 0, y: 0, preserveAspectRatio: "xMidYMid"
                 "clip-path": if config.type == \fill => "url(\##{id.clip})" else ''
@@ -288,7 +290,7 @@ do ->
             svg.appendChild group.1
         svg.attrs width: \100%, height: \100% #, viewBox: '0 0 100 100'
 
-        @transition = do
+        @transition =
             value: {src: 0, des: 0}, time: {}
 
             ease: (t,b,c,d) ->
@@ -303,7 +305,7 @@ do ->
                 text.textContent = v = Math.round(@ease dt, @value.src, dv, dur)
                 if is-stroke =>
                     node = path1
-                    style = do
+                    style =
                         "stroke-dasharray": (
                             if config["stroke-dir"] == \reverse =>
                                 "0 #{length * (100 - v) * 0.01} #{length * v * 0.01} 0"
