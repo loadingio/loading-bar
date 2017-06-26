@@ -1,7 +1,7 @@
 require! './my-module': {hey}
 
 hey!
-(->
+do ->
   make = do
     head: (viewBox) -> """<?xml version="1.0" encoding="utf-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="#viewBox">"""
     wrap: (content) -> "data:image/svg+xml;base64," + btoa(content)
@@ -417,4 +417,3 @@ hey!
   window.addEventListener \load, (->
     Array.from(document.querySelectorAll(\.ldBar)).forEach -> it.ldBar = new ldBar it
   ), false
-)!
