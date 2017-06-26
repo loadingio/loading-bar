@@ -1,0 +1,26 @@
+{
+  "name": "loading-bar",
+  "version": "0.1.0",
+  "description": "loading-Bar =============",
+  "main": "src/loading-bar.ls",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loadingio/loading-bar.git"
+  },
+  "keywords": [
+    "progress-bar"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/loadingio/loading-bar/issues"
+  },
+  "devDependencies": {
+      "browserify": "^13.1.1",
+      "browserify-livescript": "git+https://github.com/ceremcem/browserify-livescript.git"
+  }
+  "homepage": "https://github.com/loadingio/loading-bar#readme"
+}

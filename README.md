@@ -22,6 +22,26 @@ download and include the required [JS](https://raw.githubusercontent.com/loading
     <div class="ldBar"></div>
 
 
+Building
+=============
+
+### Install prerequisites
+
+```
+sudo npm install -g gulp
+```
+
+### Build
+
+```
+git clone https://github.com/loadingio/loading-bar
+cd loading-bar
+npm install
+gulp
+```
+
+Built files will be written into `./build` directory
+
 
 LICENSE
 =============
