@@ -1,9 +1,14 @@
 require! './my-module': {hey}
+require! presets: {presets}
 
 hey!
 do ->
-  make = do
-    head: (viewBox) -> """<?xml version="1.0" encoding="utf-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="#viewBox">"""
+  make =
+    head: (viewBox) -> """
+        <?xml version="1.0" encoding="utf-8"?>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="#viewBox">
+        """
+
     wrap: (content) -> "data:image/svg+xml;base64," + btoa(content)
     gradient: (dir = 45, dur = 1, ...colors) ->
       ret = [@head "0 0 100 100"]
@@ -80,78 +85,6 @@ do ->
         @running = true
         requestAnimationFrame (~> @main it)
 
-  preset = do
-    rainbow: do
-      "type": 'stroke'
-      "path": 'M10 10L90 10'
-      "stroke": 'data:ldbar/res,gradient(0,1,#a551df,#fd51ad,#ff7f82,#ffb874,#ffeb90)'
-    energy: do
-      "type": 'fill'
-      "path": 'M15 5L85 5A5 5 0 0 1 85 15L15 15A5 5 0 0 1 15 5'
-      "stroke": \#f00
-      "fill": 'data:ldbar/res,gradient(45,2,#4e9,#8fb,#4e9)'
-      "fill-dir": "ltr"
-      "fill-background": \#444
-      "fill-background-extrude": 1
-    stripe: do
-      "type": 'fill'
-      "path": 'M15 5L85 5A5 5 0 0 1 85 15L15 15A5 5 0 0 1 15 5'
-      "stroke": \#f00
-      "fill": 'data:ldbar/res,stripe(#25b,#58e,1)'
-      "fill-dir": "ltr"
-      "fill-background": \#ddd
-      "fill-background-extrude": 1
-    text: do
-      "type": 'fill'
-      "img": """data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="70" height="20" viewBox="0 0 70 20"><text x="35" y="10" text-anchor="middle" dominant-baseline="central" font-family="arial">LOADING</text></svg>"""
-      "fill-background-extrude": 1.3
-      "pattern-size": 100
-      "fill-dir": "ltr"
-      "img-size": "70,20"
-    line: do
-      "type": 'stroke'
-      "path": 'M10 10L90 10'
-      "stroke": \#25b
-      "stroke-width": 3
-      "stroke-trail": \#ddd
-      "stroke-trail-width": 1
-    fan: do
-      "type": 'stroke'
-      "path": 'M10 90A40 40 0 0 1 90 90'
-      "fill-dir": \btt
-      "fill": \#25b
-      "fill-background": \#ddd
-      "fill-background-extrude": 3
-      "stroke-dir": \normal
-      "stroke": \#25b
-      "stroke-width": \3
-      "stroke-trail": \#ddd
-      "stroke-trail-width": 0.5
-    circle: do
-      "type": 'stroke'
-      "path": 'M50 10A40 40 0 0 1 50 90A40 40 0 0 1 50 10'
-      "fill-dir": \btt
-      "fill": \#25b
-      "fill-background": \#ddd
-      "fill-background-extrude": 3
-      "stroke-dir": \normal
-      "stroke": \#25b
-      "stroke-width": \3
-      "stroke-trail": \#ddd
-      "stroke-trail-width": 0.5
-    bubble: do
-      "type": 'fill'
-      "path": 'M50 10A40 40 0 0 1 50 90A40 40 0 0 1 50 10'
-      "fill-dir": \btt
-      "fill": 'data:ldbar/res,bubble(#39d,#cef)'
-      "pattern-size": "150"
-      "fill-background": \#ddd
-      "fill-background-extrude": 2
-      "stroke-dir": \normal
-      "stroke": \#25b
-      "stroke-width": \3
-      "stroke-trail": \#ddd
-      "stroke-trail-width": 0.5
 
   window.ldBar = ldBar = (selector, option = {}) ->
     xmlns = xlink: "http://www.w3.org/1999/xlink"
@@ -202,7 +135,7 @@ do ->
       "img-size": null
 
     config.preset = root.attr("data-preset") or option["preset"]
-    if config.preset? => config <<< preset[config.preset]
+    if config.preset? => config <<< presets[config.preset]
     [{k,v} for k,v of config]
       .map ->[it.k,root.attr("data-#{it.k}")]
       .filter -> it.1
