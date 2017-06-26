@@ -2,7 +2,7 @@ require! './my-module': {hey}
 require! presets: {presets}
 
 simple-str = (arr) -> arr.join ''
-wrap: (content) -> "data:image/svg+xml;base64," + btoa(content)
+wrap = (content) -> "data:image/svg+xml;base64," + btoa(content)
 
 do ->
     make =
