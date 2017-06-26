@@ -21,6 +21,6 @@
   "devDependencies": {
       "browserify": "^13.1.1",
       "browserify-livescript": "git+https://github.com/ceremcem/browserify-livescript.git"
-  }
+  },
   "homepage": "https://github.com/loadingio/loading-bar#readme"
 }
