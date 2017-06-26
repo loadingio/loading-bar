@@ -1,6 +1,9 @@
 require! './my-module': {hey}
 require! presets: {presets}
 
+simple-str = (arr) -> arr.join ''
+wrap: (content) -> "data:image/svg+xml;base64," + btoa(content)
+
 do ->
     make =
         head: (viewBox) -> """
@@ -8,7 +11,6 @@ do ->
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="#viewBox">
                 """
 
-        wrap: (content) -> "data:image/svg+xml;base64," + btoa(content)
         gradient: (dir = 45, dur = 1, ...colors) ->
             ret = [@head "0 0 100 100"]
             len = colors.length * 4 + 1
@@ -24,14 +26,13 @@ do ->
             for i from 0 til len =>
                 idx = i * 100 / (len - 1)
                 ret.push """<stop offset="#{idx}%" stop-color="#{colors[i % colors.length]}"/>"""
-            ret.push [
-                """</linearGradient></defs>
+            ret.push """
+                </linearGradient></defs>
                 <rect x="0" y="0" width="400" height="400" fill="url(\#gradient)">
                 <animateTransform attributeName="transform" type="translate" from="-#x,-#y"
                 to="0,0" dur="#{dur}s" repeatCount="indefinite"/></rect></svg>
                 """
-            ].join("")
-            @wrap ret.join("")
+            wrap ret.join("")
 
         stripe: (c1=\#b4b4b4, c2=\#e6e6e6, dur = 1) ->
             ret = [@head "0 0 100 100"]
@@ -44,7 +45,7 @@ do ->
                 """</g><animateTransform attributeName="transform" type="translate" """
                 """from="0,0" to="20,0" dur="#{dur}s" repeatCount="indefinite"/></g></svg>"""
             ].join("")
-            @wrap ret
+            wrap ret
 
         bubble: (c1 = \#39d, c2 = \#9cf, count = 15, dur = 1, size = 6, sw=1) ->
             ret = [@head("0 0 200 200"), """<rect x="0" y="0" width="200" height="200" fill="#c1"/>"""]
@@ -63,7 +64,7 @@ do ->
                     """dur="#{d}s" begin="#{idx}s" repeatCount="indefinite"/>"""
                     """</circle>"""
                 ].join("")
-            @wrap(ret.join("") + "</svg>")
+            wrap(ret.join("") + "</svg>")
 
     handler =
         queue: {}
