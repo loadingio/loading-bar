@@ -1,3 +1,6 @@
+require! './my-module': {hey}
+
+hey!
 (->
   make = do
     head: (viewBox) -> """<?xml version="1.0" encoding="utf-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="#viewBox">"""
@@ -101,7 +104,7 @@
     text: do
       "type": 'fill'
       "img": """data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="70" height="20" viewBox="0 0 70 20"><text x="35" y="10" text-anchor="middle" dominant-baseline="central" font-family="arial">LOADING</text></svg>"""
-      "fill-background-extrude": 1.3 
+      "fill-background-extrude": 1.3
       "pattern-size": 100
       "fill-dir": "ltr"
       "img-size": "70,20"
@@ -209,7 +212,7 @@
     is-stroke = config.type == \stroke
     parse-res = (v) ->
       parser = /data:ldbar\/res,([^()]+)\(([^)]+)\)/
-      ret = parser.exec(v) 
+      ret = parser.exec(v)
       if !ret => return v
       ret = make[ret.1].apply make, ret.2.split(\,)
     config.fill = parse-res config.fill
@@ -220,7 +223,7 @@
         "xmlns:xlink": \http://www.w3.org/1999/xlink
         preserveAspectRatio: 'xMidYMid'
         width: "100%", height: "100%"
-      defs: 
+      defs:
         filter: do
           attr: id: id.filter, x: -1, y: -1, width: 3, height: 3
           feMorphology: attr: do
