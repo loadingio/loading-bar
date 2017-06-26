@@ -1,9 +1,6 @@
 require! './my-module': {hey}
 require! presets: {presets}
 
-
-
-hey!
 do ->
     make =
         head: (viewBox) -> """
@@ -90,11 +87,13 @@ do ->
 
     window.ldBar = ldBar = (selector, option = {}) ->
         xmlns = xlink: "http://www.w3.org/1999/xlink"
-        root = if typeof(selector) == typeof("") => document.querySelector selector else selector
-        if root.ldBar => return that
+        root = if typeof! selector is \String
+            document.querySelector selector
+        else
+            selector
+
         cls = root.getAttribute(\class) or ''
         if !~cls.indexOf('ldBar') => root.setAttribute \class, "#cls ldBar"
-        id = "ldBar-#{Math.random!toString 16 .substring 2}"
         id =
             key: id
             clip: "#{id}-clip"
@@ -291,7 +290,10 @@ do ->
         svg.attrs width: \100%, height: \100% #, viewBox: '0 0 100 100'
 
         @transition =
-            value: {src: 0, des: 0}, time: {}
+            value:
+                src: 0
+                des: 0
+            time: {}
 
             ease: (t,b,c,d) ->
                 t = t / (d * 0.5)
@@ -349,6 +351,9 @@ do ->
 
         @set (+config.value or 0), false
         @
+
+    /*
     window.addEventListener \load, (->
         Array.from(document.querySelectorAll(\.ldBar)).forEach -> it.ldBar = new ldBar it
     ), false
+    */
