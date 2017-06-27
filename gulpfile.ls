@@ -1,6 +1,7 @@
 argv = require 'yargs' .argv
 only-compile = false
 
+
 require! <[ watchify gulp browserify glob path fs globby touch ]>
 require! 'prelude-ls': {union, join, keys, map, unique}
 require! 'vinyl-source-stream': source
@@ -27,6 +28,7 @@ notification-enabled = yes
 # Project Folder Structure
 src-path = "#{__dirname}/src"
 build-path = "#{__dirname}/build"
+out-dir = argv.out-dir or build-path
 
 on-error = (source, msg) ->
     msg = try
@@ -96,9 +98,9 @@ function bundle
         .pipe if-else only-compile, uglify
         #.pipe rename basename: 'app'
         #.pipe sourcemaps.write '.'
-        .pipe gulp.dest build-path
+        .pipe gulp.dest out-dir
         .pipe tap (file) ->
-            log-info \browserify, "Browserify finished"
+            log-info \browserify, "Browserify finished #{if out-dir isnt build-path then "out-dir: #{out-dir}"}"
             console.log "------------------------------------------"
             first-browserify-done := yes
 
