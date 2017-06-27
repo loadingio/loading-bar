@@ -150,7 +150,6 @@ do ->
         if config.img => config.path = null
         config <<< option
 
-        console.log "config is: ", config
         is-stroke = config.type == \stroke
         parse-res = (v) ->
             parser = /data:ldbar\/res,([^()]+)\(([^)]+)\)/
