@@ -95,13 +95,14 @@ do ->
 
         cls = root.getAttribute(\class) or ''
         if !~cls.indexOf('ldBar') => root.setAttribute \class, "#cls ldBar"
+        id-prefix = "ldBar-#{Math.random!toString 16 .substring 2}"
         id =
             key: id
-            clip: "#{id}-clip"
-            filter: "#{id}-filter"
-            pattern: "#{id}-pattern"
-            mask: "#{id}-mask"
-            mask-path: "#{id}-mask-path"
+            clip: "#{id-prefix}-clip"
+            filter: "#{id-prefix}-filter"
+            pattern: "#{id-prefix}-pattern"
+            mask: "#{id-prefix}-mask"
+            mask-path: "#{id-prefix}-mask-path"
         domTree = (n,o) ->
             n = newNode n
             for k,v of o => if k != \attr => n.appendChild domTree(k, v or {})
@@ -136,14 +137,20 @@ do ->
             "value": 0
             "img-size": null
 
-        config.preset = root.attr("data-preset") or option["preset"]
-        if config.preset? => config <<< presets[config.preset]
-        [{k,v} for k,v of config]
-            .map ->[it.k,root.attr("data-#{it.k}")]
-            .filter -> it.1
-            .map -> config[it.0] = it.1
+        config["preset"] = root.attr("data-preset") or option["preset"]
+
+        if config.preset
+            # use the default preset
+            config <<< presets[config.preset]
+
+        for attr, data-key of config
+            if root.attr "data-#{data-key}"
+                config[attr] = root.attr "data-#{data-key}"
+
         if config.img => config.path = null
         config <<< option
+
+        console.log "config is: ", config
         is-stroke = config.type == \stroke
         parse-res = (v) ->
             parser = /data:ldbar\/res,([^()]+)\(([^)]+)\)/
@@ -195,6 +202,7 @@ do ->
         text.setAttribute \class, \ldBar-label
         root.appendChild svg
         root.appendChild text
+
         group = [0,0]
         length = 0
 
