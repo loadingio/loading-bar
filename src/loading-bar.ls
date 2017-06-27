@@ -204,8 +204,8 @@
       .map ->[it.k,root.attr("data-#{it.k}")]
       .filter -> it.1
       .map -> config[it.0] = it.1
-    if config.img => config.path = null
     config <<< option
+    if config.img => config.path = null
     is-stroke = config.type == \stroke
     parse-res = (v) ->
       parser = /data:ldbar\/res,([^()]+)\(([^)]+)\)/
