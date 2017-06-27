@@ -138,7 +138,7 @@ do ->
             "img-size": null
 
         config["preset"] = root.attr("data-preset") or option["preset"]
-        
+
         if config.preset?
             # use the default preset
             config <<< presets[config.preset]
@@ -148,8 +148,8 @@ do ->
             if that = root.attr "data-#{attr}"
                 config[attr] = that
 
-        if config.img => config.path = null
         config <<< option
+        if config.img => config.path = null
 
         is-stroke = config.type == \stroke
         parse-res = (v) ->
