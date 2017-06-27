@@ -138,19 +138,29 @@ do ->
             "img-size": null
 
         config["preset"] = root.attr("data-preset") or option["preset"]
-
-        if config.preset
+        
+        if config.preset?
             # use the default preset
             config <<< presets[config.preset]
 
-        for attr, data-key of config
-            if root.attr "data-#{data-key}"
-                config[attr] = root.attr "data-#{data-key}"
+        # overwrite if there are arguments passed via data-* attributes
+        for attr of config
+            if that = root.attr "data-#{attr}"
+                config[attr] = that
 
         if config.img => config.path = null
         config <<< option
 
         is-stroke = config.type == \stroke
+        parse-res = (v) ->
+            parser = /data:ldbar\/res,([^()]+)\(([^)]+)\)/
+            ret = parser.exec(v)
+            if !ret => return v
+            ret = make[ret.1].apply make, ret.2.split(\,)
+        config.fill = parse-res config.fill
+        config.stroke = parse-res config.stroke
+
+
         parse-res = (v) ->
             parser = /data:ldbar\/res,([^()]+)\(([^)]+)\)/
             ret = parser.exec(v)
