@@ -99,7 +99,7 @@ do ->
         if !~cls.indexOf('ldBar') => root.setAttribute \class, "#cls ldBar"
         id-prefix = "ldBar-#{Math.random!toString 16 .substring 2}"
         id =
-            key: id
+            key: id-prefix
             clip: "#{id-prefix}-clip"
             filter: "#{id-prefix}-filter"
             pattern: "#{id-prefix}-pattern"
