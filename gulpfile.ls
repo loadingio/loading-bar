@@ -8,6 +8,7 @@ require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer
 require! 'gulp-watch': watch
 require! 'gulp-pug': pug
+require! 'gulp-stylus': stylus
 require! 'node-notifier': notifier
 require! 'gulp-concat': cat
 require! 'gulp-uglify': uglify
@@ -21,6 +22,7 @@ require! 'through2':through
 require! 'optimize-js'
 require! 'gulp-if-else': if-else
 require! 'gulp-rename': rename
+require! 'gulp-zip': zip
 
 # Build Settings
 notification-enabled = yes
@@ -58,10 +60,19 @@ gulp.task \default, ->
     do function run-all
         gulp.start do
             \browserify
+            \css
+            \zip
+            \compressjs
             ...
 
     watch for-browserify, ->
         gulp.start \browserify
+    watch ["#{src-path}/*.styl"], ->
+        gulp.start \css
+    watch ["#{out-dir}/*.js", "#{out-dir}/*.css"], ->
+        gulp.start \zip
+    watch ["#{out-dir}/loading-bar.js"], ->
+        gulp.start \compressjs
 
 
 browserify-cache = {}
@@ -106,3 +117,24 @@ function bundle
 
 gulp.task \browserify, ->
     bundle!
+
+
+gulp.task \css, ->
+    gulp.src \src/loading-bar.styl
+        .pipe stylus({compress: true})
+        .pipe gulp.dest out-dir
+        .pipe tap (file) ->
+            log-info \css, "Stylus -> CSS  finished #{if out-dir isnt build-path then "out-dir: #{out-dir}"}"
+            console.log "------------------------------------------"
+
+gulp.task \zip, ->
+    gulp.src ["#out-dir/*.js","#out-dir/*.css"]
+      .pipe zip("loading-bar.zip")
+      .pipe gulp.dest out-dir
+
+
+gulp.task \compressjs, ->
+    gulp.src ["#out-dir/*.js"]
+      .pipe uglify!
+      .pipe rename suffix: \.min
+      .pipe gulp.dest out-dir

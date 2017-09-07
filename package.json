@@ -28,6 +28,7 @@
       "gulp-flatten": "^0.3.1",
       "gulp-if-else": "^1.0.3",
       "gulp-pug": "^3.3.0",
+      "gulp-stylus": "^2.6.0",
       "gulp-rename": "^1.2.2",
       "gulp-sourcemaps": "^2.6.1",
       "gulp-tap": "^1.0.1",
@@ -39,6 +40,7 @@
       "touch": "^3.1.0",
       "vinyl-buffer": "^1.0.0",
       "vinyl-source-stream": "^1.1.0",
+      "gulp-zip": "^4.0.0",
       "watchify": "^3.9.0"
   },
   "homepage": "https://github.com/loadingio/loading-bar#readme"
