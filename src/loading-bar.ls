@@ -162,15 +162,6 @@ do ->
         config.fill = parse-res config.fill
         config.stroke = parse-res config.stroke
 
-
-        parse-res = (v) ->
-            parser = /data:ldbar\/res,([^()]+)\(([^)]+)\)/
-            ret = parser.exec(v)
-            if !ret => return v
-            ret = make[ret.1].apply make, ret.2.split(\,)
-        config.fill = parse-res config.fill
-        config.stroke = parse-res config.stroke
-
         dom =
             attr:
                 "xmlns:xlink": \http://www.w3.org/1999/xlink
