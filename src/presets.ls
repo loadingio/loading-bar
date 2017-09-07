@@ -1,4 +1,3 @@
-console.log "REMOVEME: presets are separated"
 export presets =
     rainbow:
         "type": 'stroke'
