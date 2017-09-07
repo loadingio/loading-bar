@@ -93,6 +93,8 @@ do ->
         else
             selector
 
+        if !root.ldBar => root.ldBar = @
+
         cls = root.getAttribute(\class) or ''
         if !~cls.indexOf('ldBar') => root.setAttribute \class, "#cls ldBar"
         id-prefix = "ldBar-#{Math.random!toString 16 .substring 2}"
@@ -370,8 +372,7 @@ do ->
         @set (+config.value or 0), false
         @
 
-    /*
     window.addEventListener \load, (->
-        Array.from(document.querySelectorAll(\.ldBar)).forEach -> it.ldBar = new ldBar it
+        Array.from(document.querySelectorAll(\.ldBar)).forEach ->
+          if !it.ldBar => it.ldBar = new ldBar it
     ), false
-    */
