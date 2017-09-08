@@ -1,4 +1,3 @@
-require! './my-module': {hey}
 require! presets: {presets}
 
 simple-str = (arr) -> arr.join ''
