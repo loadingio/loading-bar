@@ -363,6 +363,6 @@ do ->
         @
 
     window.addEventListener \load, (->
-        Array.from(document.querySelectorAll(\.ldBar)).forEach ->
-          if !it.ldBar => it.ldBar = new ldBar it
+        for node in document.querySelectorAll(\.ldBar) =>
+          if !node.ldBar => node.ldBar = new ldBar node
     ), false
