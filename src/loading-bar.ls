@@ -137,6 +137,9 @@ do ->
             "easing": \linear
             "value": 0
             "img-size": null
+            "bbox": null
+            "set-dim": true
+            "aspect-ratio": "xMidYMid"
 
         config["preset"] = root.attr("data-preset") or option["preset"]
 
@@ -160,11 +163,12 @@ do ->
             ret = make[ret.1].apply make, ret.2.split(\,)
         config.fill = parse-res config.fill
         config.stroke = parse-res config.stroke
+        if config["set-dim"] == \false => config["set-dim"] = false
 
         dom =
             attr:
                 "xmlns:xlink": \http://www.w3.org/1999/xlink
-                preserveAspectRatio: 'xMidYMid'
+                preserveAspectRatio: config["aspect-ratio"]
                 width: "100%", height: "100%"
             defs:
                 filter:
@@ -178,7 +182,7 @@ do ->
                     image: attr:
                         "xlink:href": config.img
                         filter: "url(\##{id.filter})"
-                        x: 0, y: 0, width: 100, height: 100, preserveAspectRatio: "xMidYMid"
+                        x: 0, y: 0, width: 100, height: 100, preserveAspectRatio: config["aspect-ratio"]
 
                 g:
                     mask:
@@ -207,14 +211,20 @@ do ->
         group = [0,0]
         length = 0
 
-        @fit = ->
-            box = group.1.getBBox!
-            d = (Math.max.apply null, <[stroke-width stroke-trail-width fill-background-extrude]>.map(->config[it])) * 1.5
+        @fit = ~>
+            if config["bbox"] =>
+              box = that.split(' ').map(->+(it.trim!))
+              box = {x: box.0, y: box.1, width: box.2, height: box.3}
+            else box = group.1.getBBox!
+            d = (Math.max.apply(
+              null, <[stroke-width stroke-trail-width fill-background-extrude]>.map(->config[it]))
+            ) * 1.5
 
             svg.attrs viewBox: [box.x - d, box.y - d, box.width + d * 2, box.height + d * 2].join(" ")
+            if config["set-dim"] => <[width height]>.map ~> if !root.style[it] or @fit[it] =>
+              root.style[it] = "#{box[it] + d * 2}px"
+              @fit[it] = true
 
-            if !root.style.width => root.styles width: "#{box.width + d * 2}px"
-            if !root.style.height => root.styles height: "#{box.height + d * 2}px"
             rect = group.0.querySelector \rect
             if rect => rect.attrs do
                 x: box.x - d, y: box.y - d, width: box.width + d * 2, height: box.height + d * 2
@@ -275,7 +285,7 @@ do ->
             svg.querySelector 'mask image' .attrs do
                 width: size.width, height: size.height
             group.1 = domTree \g, image: attr:
-                width: size.width, height: size.height, x: 0, y: 0, preserveAspectRatio: "xMidYMid"
+                width: size.width, height: size.height, x: 0, y: 0, preserveAspectRatio: config["aspect-ratio"]
                 #width: 100, height: 100, x: 0, y: 0, preserveAspectRatio: "xMidYMid"
                 "clip-path": if config.type == \fill => "url(\##{id.clip})" else ''
                 "xlink:href": config.img, class: \solid
