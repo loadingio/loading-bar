@@ -3,6 +3,7 @@ export presets =
         "type": 'stroke'
         "path": 'M10 10L90 10'
         "stroke": 'data:ldbar/res,gradient(0,1,#a551df,#fd51ad,#ff7f82,#ffb874,#ffeb90)'
+        "bbox": "10 10 80 0"
     energy:
         "type": 'fill'
         "path": 'M15 5L85 5A5 5 0 0 1 85 15L15 15A5 5 0 0 1 15 5'
@@ -11,6 +12,7 @@ export presets =
         "fill-dir": "ltr"
         "fill-background": \#444
         "fill-background-extrude": 1
+        "bbox": "10 5 80 10"
     stripe:
         "type": 'fill'
         "path": 'M15 5L85 5A5 5 0 0 1 85 15L15 15A5 5 0 0 1 15 5'
@@ -19,6 +21,7 @@ export presets =
         "fill-dir": "ltr"
         "fill-background": \#ddd
         "fill-background-extrude": 1
+        "bbox": "10 5 80 10"
     text:
         "type": 'fill'
         "img": """data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="70" height="20" viewBox="0 0 70 20"><text x="35" y="10" text-anchor="middle" dominant-baseline="central" font-family="arial">LOADING</text></svg>"""
@@ -26,6 +29,7 @@ export presets =
         "pattern-size": 100
         "fill-dir": "ltr"
         "img-size": "70,20"
+        "bbox": "0 0 70 20"
     line:
         "type": 'stroke'
         "path": 'M10 10L90 10'
@@ -33,6 +37,7 @@ export presets =
         "stroke-width": 3
         "stroke-trail": \#ddd
         "stroke-trail-width": 1
+        "bbox": "10 10 80 0"
     fan:
         "type": 'stroke'
         "path": 'M10 90A40 40 0 0 1 90 90'
@@ -45,6 +50,7 @@ export presets =
         "stroke-width": \3
         "stroke-trail": \#ddd
         "stroke-trail-width": 0.5
+        "bbox": "10 50 80 40"
     circle:
         "type": 'stroke'
         "path": 'M50 10A40 40 0 0 1 50 90A40 40 0 0 1 50 10'
@@ -57,6 +63,7 @@ export presets =
         "stroke-width": \3
         "stroke-trail": \#ddd
         "stroke-trail-width": 0.5
+        "bbox": "10 10 80 80"
     bubble:
         "type": 'fill'
         "path": 'M50 10A40 40 0 0 1 50 90A40 40 0 0 1 50 10'
@@ -70,3 +77,4 @@ export presets =
         "stroke-width": \3
         "stroke-trail": \#ddd
         "stroke-trail-width": 0.5
+        "bbox": "10 10 80 80"
