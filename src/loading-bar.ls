@@ -93,6 +93,7 @@ do ->
             selector
 
         if !root.ldBar => root.ldBar = @
+        else return root.ldBar
 
         cls = root.getAttribute(\class) or ''
         if !~cls.indexOf('ldBar') => root.setAttribute \class, "#cls ldBar"
