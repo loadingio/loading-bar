@@ -3,7 +3,7 @@ export presets =
         "type": 'stroke'
         "path": 'M10 10L90 10'
         "stroke": 'data:ldbar/res,gradient(0,1,#a551df,#fd51ad,#ff7f82,#ffb874,#ffeb90)'
-        "bbox": "10 10 80 0"
+        "bbox": "10 10 80 10"
     energy:
         "type": 'fill'
         "path": 'M15 5L85 5A5 5 0 0 1 85 15L15 15A5 5 0 0 1 15 5'
@@ -37,7 +37,7 @@ export presets =
         "stroke-width": 3
         "stroke-trail": \#ddd
         "stroke-trail-width": 1
-        "bbox": "10 10 80 0"
+        "bbox": "10 10 80 10"
     fan:
         "type": 'stroke'
         "path": 'M10 90A40 40 0 0 1 90 90'
