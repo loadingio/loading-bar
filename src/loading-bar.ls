@@ -323,10 +323,10 @@ do ->
                 t = t - 1
                 return -c * 0.5 * (t*(t - 2) - 1) + b
 
-            handler: (time) ->
+            handler: (time, doTransition = true) ->
                 if !@time.src? => @time.src = time
                 [dv, dt, dur] = [@value.des - @value.src, (time - @time.src) * 0.001, +config["duration"] or 1]
-                text.textContent = v = Math.round(@ease dt, @value.src, dv, dur)
+                text.textContent = v = if doTransition => Math.round(@ease dt, @value.src, dv, dur) else @value.des
                 if is-stroke =>
                     node = path1
                     style =
@@ -361,7 +361,7 @@ do ->
                 !!( root.offsetWidth || root.offsetHeight || root.getClientRects!length )
                 if !doTransition or !( root.offsetWidth || root.offsetHeight || root.getClientRects!length ) =>
                     @time.src = 0
-                    @handler 1000
+                    @handler 1000, false
                     return
                 handler.add id.key, (time) ~> return @handler time
 
