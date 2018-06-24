@@ -23,6 +23,7 @@ require! 'optimize-js'
 require! 'gulp-if-else': if-else
 require! 'gulp-rename': rename
 require! 'gulp-zip': zip
+require! 'gulp-remove-files': remove-files
 
 # Build Settings
 notification-enabled = yes
@@ -118,7 +119,6 @@ function bundle
 gulp.task \browserify, ->
     bundle!
 
-
 gulp.task \css, ->
     gulp.src \src/loading-bar.styl
         .pipe stylus({compress: true})
@@ -128,13 +128,13 @@ gulp.task \css, ->
             console.log "------------------------------------------"
 
 gulp.task \zip, ->
-    gulp.src ["#out-dir/*.js","#out-dir/*.css"]
+    gulp.src ["#out-dir/*.js","#out-dir/*.css", "!build/*.min.*"]
       .pipe zip("loading-bar.zip")
       .pipe gulp.dest out-dir
 
 
 gulp.task \compressjs, ->
-    gulp.src ["#out-dir/*.js"]
+    gulp.src ["#out-dir/*.js", "!build/*.min.*"]
       .pipe uglify!
       .pipe rename suffix: \.min
       .pipe gulp.dest out-dir
