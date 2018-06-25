@@ -1,4 +1,4 @@
-require! presets: {presets}
+require! "./presets": {presets}
 
 simple-str = (arr) -> arr.join ''
 wrap = (content) -> "data:image/svg+xml;base64," + btoa(content)
@@ -378,3 +378,5 @@ do ->
         for node in document.querySelectorAll(\.ldBar) =>
           if !node.ldBar => node.ldBar = new ldBar node
     ), false
+
+module.exports = ldBar
