@@ -123,7 +123,7 @@ do ->
         config =
             "type": 'stroke'
             "img": ''
-            "path": 'M10 10L90 10'
+            "path": 'M10 10L90 10M90 8M90 12'
             "fill-dir": \btt
             "fill": \#25b
             "fill-background": \#ddd
@@ -219,7 +219,7 @@ do ->
               box = that.split(' ').map(->+(it.trim!))
               box = {x: box.0, y: box.1, width: box.2, height: box.3}
             else box = group.1.getBBox!
-            if !box or box.width ==0 or box.height == 0 => box = {x: 0, y: 0, width: 100, height: 100}
+            if !box or box.width == 0 or box.height == 0 => box = {x: 0, y: 0, width: 100, height: 100}
             d = (Math.max.apply(
               null, <[stroke-width stroke-trail-width fill-background-extrude]>.map(->config[it]))
             ) * 1.5
