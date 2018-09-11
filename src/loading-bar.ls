@@ -1,4 +1,4 @@
-require! presets: {presets}
+require! "./presets": {presets}
 
 simple-str = (arr) -> arr.join ''
 wrap = (content) -> "data:image/svg+xml;base64," + btoa(content)
@@ -123,7 +123,7 @@ do ->
         config =
             "type": 'stroke'
             "img": ''
-            "path": 'M10 10L90 10'
+            "path": 'M10 10L90 10M90 8M90 12'
             "fill-dir": \btt
             "fill": \#25b
             "fill-background": \#ddd
@@ -141,6 +141,8 @@ do ->
             "bbox": null
             "set-dim": true
             "aspect-ratio": "xMidYMid"
+            "min": 0
+            "max": 100
 
         config["preset"] = root.attr("data-preset") or option["preset"]
 
@@ -217,7 +219,7 @@ do ->
               box = that.split(' ').map(->+(it.trim!))
               box = {x: box.0, y: box.1, width: box.2, height: box.3}
             else box = group.1.getBBox!
-            if !box or box.width ==0 or box.height == 0 => box = {x: 0, y: 0, width: 100, height: 100}
+            if !box or box.width == 0 or box.height == 0 => box = {x: 0, y: 0, width: 100, height: 100}
             d = (Math.max.apply(
               null, <[stroke-width stroke-trail-width fill-background-extrude]>.map(->config[it]))
             ) * 1.5
@@ -325,33 +327,38 @@ do ->
 
             handler: (time, doTransition = true) ->
                 if !@time.src? => @time.src = time
+                [min,max] = [config["min"], config["max"]]
                 [dv, dt, dur] = [@value.des - @value.src, (time - @time.src) * 0.001, +config["duration"] or 1]
-                text.textContent = v = if doTransition => Math.round(@ease dt, @value.src, dv, dur) else @value.des
+                v = if doTransition => Math.round(@ease dt, @value.src, dv, dur) else @value.des
+                v >?= min
+                v <?= max
+                text.textContent = v
+                p = 100.0 * (v - min ) / ( max - min )
                 if is-stroke =>
                     node = path1
                     style =
                         "stroke-dasharray": (
                             if config["stroke-dir"] == \reverse =>
-                                "0 #{length * (100 - v) * 0.01} #{length * v * 0.01} 0"
-                            else => "#{v * 0.01 * length} #{(100 - v) * 0.01 * length + 1}"
+                                "0 #{length * (100 - p) * 0.01} #{length * p * 0.01} 0"
+                            else => "#{p * 0.01 * length} #{(100 - p) * 0.01 * length + 1}"
                         )
                 else
                     box = group.1.getBBox!
                     dir = config["fill-dir"]
                     style = if dir == \btt or !dir => do
-                        y: box.y + box.height * (100 - v) * 0.01
-                        height: box.height * v * 0.01
+                        y: box.y + box.height * (100 - p) * 0.01
+                        height: box.height * p * 0.01
                         x: box.x, width: box.width
                     else if dir == \ttb => do
-                        y: box.y, height: box.height * v * 0.01
+                        y: box.y, height: box.height * p * 0.01
                         x: box.x, width: box.width
                     else if dir == \ltr => do
                         y: box.y, height: box.height
-                        x: box.x, width: box.width * v * 0.01
+                        x: box.x, width: box.width * p * 0.01
                     else if dir == \rtl => do
                         y: box.y, height: box.height
-                        x: box.x + box.width * (100 - v) * 0.01
-                        width: box.width * v * 0.01
+                        x: box.x + box.width * (100 - p) * 0.01
+                        width: box.width * p * 0.01
                     node = svg.querySelector \rect
                 node.attrs style
                 if dt >= dur => delete @time.src; return false
@@ -378,3 +385,5 @@ do ->
         for node in document.querySelectorAll(\.ldBar) =>
           if !node.ldBar => node.ldBar = new ldBar node
     ), false
+
+module.exports = ldBar

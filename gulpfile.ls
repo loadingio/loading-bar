@@ -2,7 +2,7 @@ argv = require 'yargs' .argv
 only-compile = false
 
 
-require! <[ watchify gulp browserify glob path fs globby touch ]>
+require! <[ watchify gulp browserify glob path fs globby touch gulp-livescript]>
 require! 'prelude-ls': {union, join, keys, map, unique}
 require! 'vinyl-source-stream': source
 require! 'vinyl-buffer': buffer
@@ -60,6 +60,7 @@ for-browserify =
 gulp.task \default, ->
     do function run-all
         gulp.start do
+            \lib
             \browserify
             \css
             \zip
@@ -70,6 +71,8 @@ gulp.task \default, ->
         gulp.start \browserify
     watch ["#{src-path}/*.styl"], ->
         gulp.start \css
+    watch ["#{src-path}/*.ls"], ->
+        gulp.start \lib
     watch ["#{out-dir}/*.js", "#{out-dir}/*.css"], ->
         gulp.start \zip
     watch ["#{out-dir}/loading-bar.js"], ->
@@ -118,6 +121,11 @@ function bundle
 
 gulp.task \browserify, ->
     bundle!
+
+gulp.task \lib, ->
+  gulp.src \src/*.ls
+    .pipe gulp-livescript bare: true
+    .pipe gulp.dest 'lib'
 
 gulp.task \css, ->
     gulp.src \src/loading-bar.styl

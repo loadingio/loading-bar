@@ -1,8 +1,8 @@
 {
-  "name": "loading-bar",
-  "version": "0.1.0",
-  "description": "loading-Bar =============",
-  "main": "src/loading-bar.ls",
+  "name": "@loadingio/loading-bar",
+  "version": "0.1.1",
+  "description": " ====== Progress Bar Library by loading.io ====== ",
+  "main": "lib/loading-bar.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,12 +13,13 @@
   "keywords": [
     "progress-bar"
   ],
-  "author": "",
+  "author": "tkirby",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/loadingio/loading-bar/issues"
   },
   "devDependencies": {
+    "LiveScript": ">=1.2.0",
     "browserify": "^13.1.1",
     "browserify-livescript": "git+https://github.com/ceremcem/browserify-livescript.git",
     "globby": "^6.1.0",
@@ -40,6 +41,10 @@
     "touch": "^3.1.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
+<<<<<<< HEAD
+=======
+    "gulp-livescript": "^3.0.1",
+>>>>>>> master
     "gulp-zip": "^4.0.0",
     "watchify": "^3.9.0"
   },
