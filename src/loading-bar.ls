@@ -143,6 +143,8 @@ do ->
             "aspect-ratio": "xMidYMid"
             "min": 0
             "max": 100
+            "precision": 0
+            "padding": undefined
 
         config["preset"] = root.attr("data-preset") or option["preset"]
 
@@ -223,6 +225,7 @@ do ->
             d = (Math.max.apply(
               null, <[stroke-width stroke-trail-width fill-background-extrude]>.map(->config[it]))
             ) * 1.5
+            if config["padding"]? => d = +config["padding"]
 
             svg.attrs viewBox: [box.x - d, box.y - d, box.width + d * 2, box.height + d * 2].join(" ")
             if config["set-dim"] => <[width height]>.map ~> if !root.style[it] or @fit[it] =>
@@ -327,9 +330,11 @@ do ->
 
             handler: (time, doTransition = true) ->
                 if !@time.src? => @time.src = time
-                [min,max] = [config["min"], config["max"]]
+                [min,max,prec] = [config["min"], config["max"],1/config["precision"]]
                 [dv, dt, dur] = [@value.des - @value.src, (time - @time.src) * 0.001, +config["duration"] or 1]
-                v = if doTransition => Math.round(@ease dt, @value.src, dv, dur) else @value.des
+                v = if doTransition => @ease(dt, @value.src, dv, dur) else @value.des
+                if config.precision => v = Math.round(v * prec) / prec
+                else if doTransition => v = Math.round(v)
                 v >?= min
                 v <?= max
                 text.textContent = v

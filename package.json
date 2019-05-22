@@ -45,5 +45,8 @@
     "gulp-zip": "^4.0.0",
     "watchify": "^3.9.0"
   },
-  "homepage": "https://github.com/loadingio/loading-bar#readme"
+  "homepage": "https://github.com/loadingio/loading-bar#readme",
+  "dependencies": {
+    "gulp-remove-files": "0.0.3"
+  }
 }
