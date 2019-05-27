@@ -141,6 +141,7 @@ do ->
             "bbox": null
             "set-dim": true
             "aspect-ratio": "xMidYMid"
+            "transition-in": false
             "min": 0
             "max": 100
             "precision": 0
@@ -383,7 +384,7 @@ do ->
             des = @value
             @transition.start src, des, doTransition
 
-        @set (+config.value or 0), false
+        @set (+config.value or 0), config["transition-in"] or false
         @
 
     window.addEventListener \load, (->
