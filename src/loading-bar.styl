@@ -1,19 +1,16 @@
-
-transform()
-  -webkit-transform arguments
-  transform arguments
-
 .ldBar
   position: relative
   &.label-center > .ldBar-label
     position: absolute
     top: 50%
     left: 50%
-    transform(translate(-50%,-50%))
+    transform: translate(-50%,-50%)
     text-shadow: 0 0 3px rgba(255,255,255,1)
+
 .ldBar-label:after
   content: "%"
   display: inline
+
 .ldBar.no-percent
   .ldBar-label:after
     content: ""

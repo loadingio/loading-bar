@@ -1,0 +1,3 @@
+baseline: gray,muted baseline showing the whole track of progressbar. <path class="baseline">
+mainline: main progress bar used to show progress for stroke type. <path class="mainline">
+solid: main progress bar, fill type. <path class="solid">
