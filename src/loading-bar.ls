@@ -157,10 +157,6 @@ do ->
         box = that.split(' ').map(->+(it.trim!))
         box = {x: box.0, y: box.1, width: box.2, height: box.3}
       else box = group.1.getBBox!
-      #else
-      #  box = root.getBoundingClientRect!
-      #  box.x = 0
-      #  box.y = 0
       if !box => box = {x: 0, y: 0, width: 100, height: 100}
       p0 = group.0.querySelector('*')
       s0 = getComputedStyle(p0)
@@ -171,22 +167,9 @@ do ->
       box.height += sw
       box.x -= (sw/2)
       box.y -= (sw/2)
-
-      #box.width += p1.style.strokeWidth
-      # TODO: 就是這邊把 bbox 搞爛
-      #if !box or !box.width or !box.height => box = {x: 0, y: 0, width: 100, height: 100}
-      # TODO padding 要怎麼算?
-      #d = (Math.max.apply(
-      #  null, <[stroke-width stroke-trail-width fill-background-extrude]>.map(->cfg[it]))
-      #) * 1.5
-      #d = 0
-      #if !box.width => box.width = 2 * d
-      #if !box.height => box.height = 2 * d
       d = if cfg["padding"]? => +cfg["padding"] else 0
-      #attrs svg, viewBox: [box.x - d, box.y - d, box.width + d * 2, box.height + d * 2].join(" ")
       attrs svg, viewBox: [box.x - d, box.y - d, box.width + d * 2, box.height + d * 2].join(" ")
       if cfg["set-dim"] => <[width height]>.map ~> if !root.style[it] or @fit[it] =>
-        #root.style[it] = "#{box[it] + d * 2}px"
         @fit[it] = true
       rect = group.0.querySelector \rect
       if rect => attrs rect, do
