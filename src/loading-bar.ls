@@ -15,11 +15,18 @@ parse-res = (v) ->
 txt = (n,t) -> n.appendChild document.createTextNode(t)
 styles = (n,o) -> for k,v of o => n.style[k] = v
 append = (n,v) -> n.appendChild r = document.createElementNS xmlns.svg, v
-attr = (n,k,v) -> if v? => n.setAttribute k, v else n.getAttribute k
+attr = (n,k,v) ->
+  r = /([^:]+):([^:]+)/.exec(k)
+  if v? =>
+    return if !r or !xmlns[r.1] => n.setAttribute k, v
+    else n.setAttributeNS xmlns[r.1], k, v
+  else
+    return if !r or !xmlns[r.1] => n.getAttribute k
+    else n.getAttributeNS xmlns[r.1], k
 attrs = (n,o) -> for k,v of o =>
   r = /([^:]+):([^:]+)/.exec(k)
   if !r or !xmlns[r.1] => n.setAttribute k, v
-  else n.setAttributeNS xmlns[ret.1], k, v
+  else n.setAttributeNS xmlns[r.1], k, v
 
 do ->
   # raf - RequestAnimationFrame until nothing is in the queue.
@@ -58,7 +65,7 @@ do ->
     cfg = do # default values
       "type": 'stroke'
       "img": ''
-      "path": 'M10 10L90 10M90 8M90 12'
+      "path": 'M10 10L90 10'
       "fill-dir": \btt
       "fill": \#25b
       "fill-background": \#ddd
@@ -81,6 +88,7 @@ do ->
       "max": 100
       "precision": 0
       "padding": undefined
+      "unit": null
     # config priority: attr in js opt > data-attr > attr in preset > default value
     cfg.preset = attr(root,\data-preset) or opt.preset
     if cfg.preset? => cfg <<< presets[cfg.preset] # load config from preset
@@ -94,6 +102,7 @@ do ->
     cfg.stroke = parse-res cfg.stroke
     if cfg["set-dim"] == \false => cfg["set-dim"] = false
     is-stroke = cfg.type == \stroke
+    if cfg.unit => root.classList.add \no-percent # no CSS unit if cfg.unit is defined.
 
     # Prepare SVG DOM
     dom = do
@@ -140,7 +149,7 @@ do ->
     # group:
     #   0: <g> for base / frame elements
     #   1: <g> for foreground path elements
-    # len:   TODO
+    # len: path length.
     [group,len] = [[0,0],0]
 
     @fit = ~>
@@ -148,16 +157,36 @@ do ->
         box = that.split(' ').map(->+(it.trim!))
         box = {x: box.0, y: box.1, width: box.2, height: box.3}
       else box = group.1.getBBox!
+      #else
+      #  box = root.getBoundingClientRect!
+      #  box.x = 0
+      #  box.y = 0
+      if !box => box = {x: 0, y: 0, width: 100, height: 100}
+      p0 = group.0.querySelector('*')
+      s0 = getComputedStyle(p0)
+      p1 = group.1.querySelector('*')
+      s1 = getComputedStyle(p1)
+      sw = Math.max(+s0.strokeWidth.replace('px',''), +s1.strokeWidth.replace('px',''))
+      box.width += sw
+      box.height += sw
+      box.x -= (sw/2)
+      box.y -= (sw/2)
+
+      #box.width += p1.style.strokeWidth
       # TODO: 就是這邊把 bbox 搞爛
-      if !box or !box.width or !box.height => box = {x: 0, y: 0, width: 100, height: 100}
+      #if !box or !box.width or !box.height => box = {x: 0, y: 0, width: 100, height: 100}
       # TODO padding 要怎麼算?
-      d = (Math.max.apply(
-        null, <[stroke-width stroke-trail-width fill-background-extrude]>.map(->cfg[it]))
-      ) * 1.5
-      if cfg["padding"]? => d = +cfg["padding"]
+      #d = (Math.max.apply(
+      #  null, <[stroke-width stroke-trail-width fill-background-extrude]>.map(->cfg[it]))
+      #) * 1.5
+      #d = 0
+      #if !box.width => box.width = 2 * d
+      #if !box.height => box.height = 2 * d
+      d = if cfg["padding"]? => +cfg["padding"] else 0
+      #attrs svg, viewBox: [box.x - d, box.y - d, box.width + d * 2, box.height + d * 2].join(" ")
       attrs svg, viewBox: [box.x - d, box.y - d, box.width + d * 2, box.height + d * 2].join(" ")
       if cfg["set-dim"] => <[width height]>.map ~> if !root.style[it] or @fit[it] =>
-        root.style[it] = "#{box[it] + d * 2}px"
+        #root.style[it] = "#{box[it] + d * 2}px"
         @fit[it] = true
       rect = group.0.querySelector \rect
       if rect => attrs rect, do
@@ -190,7 +219,7 @@ do ->
         attrs pimg, {width: box.width, height: box.height}
       if /.+\..+|^data:/.exec(if !is-stroke => cfg.fill else cfg.stroke) =>
         img.src = if !is-stroke => cfg.fill else cfg.stroke
-        attr pimg.attrs, \xlink:href, img.src
+        attr pimg, \xlink:href, img.src
 
       if is-stroke =>
         attrs p0, {stroke: cfg["stroke-trail"], "stroke-width": cfg["stroke-trail-width"]}
@@ -206,6 +235,7 @@ do ->
 
     else if cfg.img =>
       size = if cfg["img-size"] => ret = cfg["img-size"].split(\,); {width: +ret.0, height: +ret.1}
+      else {width: 100, height: 100}
       group.0 = domTree \g, rect: attr:
         x: 0, y: 0, width: 100, height: 100, mask: "url(\##{id.mask})", fill: cfg["fill-background"]
       attrs svg.querySelector('mask image'), {width: size.width, height: size.height}
@@ -215,11 +245,12 @@ do ->
         "xlink:href": cfg.img, class: \solid
       img = new Image!
       img.addEventListener \load, ~>
-        if !size =>
+        if !cfg["img-size"]
           if img.width and img.height => size = {width: img.width, height: img.height}
           else size = {width: 100, height: 100}
         attrs svg.querySelector('mask image'), size
         attrs group.1.querySelector('image'), size
+        attrs group.0.querySelector('rect'), size
         @fit!
         @set undefined, false
         @inited = true
@@ -229,7 +260,7 @@ do ->
 
     attrs svg, {width: \100%, height: \100%}
 
-    transition = do
+    trans = do
       v: { src: 0, des: 0 }, t: {}
       ease: (t,b,c,d) ->
         t = t / (d * 0.5)
@@ -246,7 +277,7 @@ do ->
         if cfg.precision => v = Math.round(v * prec) / prec
         else if ani => v = Math.round(v)
         v = v <? max >? min
-        text.textContent = v
+        text.innerHTML = v + (if cfg.unit => "<span>#{cfg.unit}</span>" else '')
         p = 100.0 * (v - min ) / ( max - min )
         if is-stroke =>
           node = p1
@@ -284,7 +315,7 @@ do ->
         else raf.add id.key, (time) ~> return @handler time
 
     # set value to v. animate if ani is true
-    @set = (v, ani = true) -> transition.start (@v.cur or @v.src or 0), (if v? => v else @v.des), ani
+    @set = (v, ani = true) ~> trans.start (trans.v.cur or trans.v.src or 0), (if v? => v else trans.v.des), ani
     @set (+cfg.value or 0), cfg["transition-in"] or false
     @
 
@@ -292,5 +323,5 @@ do ->
     for n in document.querySelectorAll(\.ldBar) => if !n.ldBar => new ldBar n
   ), false
 
-if module? => module.exports = ldBar
-if window? => window.ldBar = ldBar
+  if module? => module.exports = ldBar
+  if window? => window.ldBar = ldBar

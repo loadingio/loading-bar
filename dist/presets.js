@@ -4,8 +4,7 @@ out$.presets = presets = {
   rainbow: {
     "type": 'stroke',
     "path": 'M10 10L90 10',
-    "stroke": 'data:ldbar/res,gradient(0,1,#a551df,#fd51ad,#ff7f82,#ffb874,#ffeb90)',
-    "bbox": "10 10 80 10"
+    "stroke": 'data:ldbar/res,gradient(0,1,#a551df,#fd51ad,#ff7f82,#ffb874,#ffeb90)'
   },
   energy: {
     "type": 'fill',
@@ -42,8 +41,7 @@ out$.presets = presets = {
     "stroke": '#25b',
     "stroke-width": 3,
     "stroke-trail": '#ddd',
-    "stroke-trail-width": 1,
-    "bbox": "10 10 80 10"
+    "stroke-trail-width": 1
   },
   fan: {
     "type": 'stroke',
@@ -86,6 +84,7 @@ out$.presets = presets = {
     "stroke-width": '3',
     "stroke-trail": '#ddd',
     "stroke-trail-width": 0.5,
+    "padding": 2,
     "bbox": "10 10 80 80"
   }
 };

@@ -5,7 +5,8 @@
   "homepage": "https://github.com/loadingio/loading-bar#readme",
   "main": "lib/loading-bar.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cd demo; NODE_ENV=production ../node_modules/.bin/lsc ../node_modules/template/server.ls"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
     "LiveScript": ">=1.2.0",
     "stylus": "^0.54.5",
     "uglify-js": "=3.2.0",
-    "uglifycss": "0.0.29"
+    "uglifycss": "0.0.29",
+    "template": "github:zbryikt/template#v2"
   }
 }

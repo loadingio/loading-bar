@@ -1,0 +1,7 @@
+{
+  "port": 4000,
+  "watcher": {
+    "ignores": []
+  },
+  "assets": []
+}
