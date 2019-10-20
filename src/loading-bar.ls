@@ -235,7 +235,11 @@ do ->
         attrs group.1.querySelector('image'), size
         attrs group.0.querySelector('rect'), size
         @fit!
-        @set undefined, false
+        # image is load, so we set value again.
+        # if we need transition - we have to clean value so it will be treated as 0.
+        v = @value
+        @value = undefined
+        @set v, true
         @inited = true
       img.src = cfg.img
       svg.appendChild group.0

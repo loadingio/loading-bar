@@ -622,7 +622,7 @@ attrs = function(n, o){
       });
       img = new Image();
       img.addEventListener('load', function(){
-        var size;
+        var size, v;
         if (!cfg["img-size"]) {
           if (img.width && img.height) {
             size = {
@@ -640,7 +640,9 @@ attrs = function(n, o){
         attrs(group[1].querySelector('image'), size);
         attrs(group[0].querySelector('rect'), size);
         this$.fit();
-        this$.set(undefined, false);
+        v = this$.value;
+        this$.value = undefined;
+        this$.set(v, true);
         return this$.inited = true;
       });
       img.src = cfg.img;
