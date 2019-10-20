@@ -43,6 +43,8 @@
     "vinyl-source-stream": "^1.1.0",
     "gulp-livescript": "^3.0.1",
     "gulp-zip": "^4.0.0",
+    "uglify-js": "=3.2.0",
+    "uglifycss": "0.0.29",
     "watchify": "^3.9.0"
   },
   "homepage": "https://github.com/loadingio/loading-bar#readme",

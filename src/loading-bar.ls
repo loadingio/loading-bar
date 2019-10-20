@@ -310,7 +310,12 @@ do ->
                     width: size.width, height: size.height
 
                 @fit!
-                @set undefined, false
+
+                # image is load, so we set value again.
+                # if we need transition - we have to clean value so it will be treated as 0.
+                v = @value
+                @value = undefined
+                @set v, true
                 @inited = true
             img.src = config.img
             svg.appendChild group.0
