@@ -120,7 +120,7 @@ wrap = function(content){
     }
   };
   window.ldBar = ldBar = function(selector, option){
-    var xmlns, root, cls, idPrefix, id, domTree, newNode, x$, config, attr, that, isStroke, parseRes, dom, svg, text, group, length, path0, path1, patimg, img, ret, size, this$ = this;
+    var xmlns, root, cls, idPrefix, id, domTree, newNode, x$, config, attr, that, isStroke, parseRes, dom, svg, text, group, length, path0, path1, patimg, img, ret, size, img2, this$ = this;
     option == null && (option = {});
     xmlns = {
       xlink: "http://www.w3.org/1999/xlink"
@@ -220,7 +220,9 @@ wrap = function(content){
       "min": 0,
       "max": 100,
       "precision": 0,
-      "padding": undefined
+      "padding": undefined,
+      'limit-top': 1.0,
+      'limit-bottom': 0.0
     };
     config["preset"] = root.attr("data-preset") || option["preset"];
     if (config.preset != null) {
@@ -579,7 +581,88 @@ wrap = function(content){
         return this$.inited = true;
       });
       img.src = config.img;
+      if (config.img2) {
+        if (config["img-size"]) {
+          ret = config["img-size"].split(',');
+          size = {
+            width: +ret[0],
+            height: +ret[1]
+          };
+        } else {
+          size = {
+            width: 100,
+            height: 100
+          };
+        }
+        group[0] = domTree('g', {
+          rect: {
+            attr: {
+              x: 0,
+              y: 0,
+              width: 100,
+              height: 100,
+              mask: "url(#" + id.mask + ")",
+              fill: config["fill-background"]
+            }
+          }
+        });
+        svg.querySelector('mask image').attrs({
+          width: size.width,
+          height: size.height
+        });
+        group[2] = domTree('g', {
+          image: {
+            attr: {
+              width: size.width,
+              height: size.height,
+              x: 0,
+              y: 0,
+              preserveAspectRatio: config["aspect-ratio"],
+              "xlink:href": config.img2,
+              'class': 'solid'
+            }
+          }
+        });
+        img2 = new Image();
+        img2.addEventListener('load', function(){
+          var ret, size, v;
+          if (config["img-size"]) {
+            ret = config["img-size"].split(',');
+            size = {
+              width: +ret[0],
+              height: +ret[1]
+            };
+          } else if (img2.width && img2.height) {
+            size = {
+              width: img2.width,
+              height: img2.height
+            };
+          } else {
+            size = {
+              width: 100,
+              height: 100
+            };
+          }
+          svg.querySelector('mask image').attrs({
+            width: size.width,
+            height: size.height
+          });
+          group[2].querySelector('image').attrs({
+            width: size.width,
+            height: size.height
+          });
+          this$.fit();
+          v = this$.value;
+          this$.value = undefined;
+          this$.set(v, true);
+          return this$.inited = true;
+        });
+        img2.src = config.img2;
+      }
       svg.appendChild(group[0]);
+      if (config.img2) {
+        svg.appendChild(group[2]);
+      }
       svg.appendChild(group[1]);
     }
     svg.attrs({
@@ -601,7 +684,7 @@ wrap = function(content){
         return -c * 0.5 * (t * (t - 2) - 1) + b;
       },
       handler: function(time, doTransition){
-        var ref$, min, max, prec, dv, dt, dur, v, p, node, style, box, dir;
+        var ref$, min, max, prec, dv, dt, dur, v, decimals, p, t, b, node, style, box, dir;
         doTransition == null && (doTransition = true);
         if (this.time.src == null) {
           this.time.src = time;
@@ -618,8 +701,12 @@ wrap = function(content){
         }
         v >= min || (v = min);
         v <= max || (v = max);
-        text.textContent = v;
+        decimals = (prec + "").length - 1;
+        text.textContent = v.toFixed(decimals) + "";
         p = 100.0 * (v - min) / (max - min);
+        t = 1 - config["limit-top"];
+        b = config["limit-bottom"];
+        p = 100 * ((v - min) * (1 - t - b) / (max - min) + b);
         if (isStroke) {
           node = path1;
           style = {

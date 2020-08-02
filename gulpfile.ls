@@ -1,5 +1,5 @@
 argv = require 'yargs' .argv
-only-compile = false
+only-compile = argv.only-compile
 
 
 require! <[ watchify gulp browserify glob path fs globby touch gulp-livescript]>
@@ -57,7 +57,7 @@ for-browserify =
 
 
 # Organize Tasks
-gulp.task \default, ->
+gulp.task \default, (done) ->
     do function run-all
         gulp.start do
             \lib
@@ -67,8 +67,9 @@ gulp.task \default, ->
             \compressjs
             ...
 
-    watch for-browserify, ->
-        gulp.start \browserify
+    if argv.only-compile 
+        return done!
+
     watch ["#{src-path}/*.styl"], ->
         gulp.start \css
     watch ["#{src-path}/*.ls"], ->
@@ -79,7 +80,6 @@ gulp.task \default, ->
         gulp.start \compressjs
 
 
-browserify-cache = {}
 bundler = browserify do
     entries: ls-entry-file
     debug: true
@@ -87,15 +87,13 @@ bundler = browserify do
         src-path
         ...
     extensions: <[ .ls ]>
-    cache: browserify-cache
-    package-cache: {}
+    cache: {}           # required for watchify
+    package-cache: {}   # required for watchify
     plugin:
         watchify unless only-compile
         ...
 
 bundler.transform browserify-livescript
-
-first-browserify-done = no
 
 function bundle
     bundler
@@ -115,9 +113,8 @@ function bundle
         #.pipe sourcemaps.write '.'
         .pipe gulp.dest out-dir
         .pipe tap (file) ->
-            log-info \browserify, "Browserify finished #{if out-dir isnt build-path then "out-dir: #{out-dir}"}"
+            log-info \browserify, "Browserify finished."
             console.log "------------------------------------------"
-            first-browserify-done := yes
 
 gulp.task \browserify, ->
     bundle!
