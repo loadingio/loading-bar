@@ -28,7 +28,7 @@ Building
 ### Install prerequisites
 
 ```
-sudo npm install -g gulp
+sudo npm install -g gulp nave
 ```
 
 ### Build
@@ -37,11 +37,19 @@ sudo npm install -g gulp
 git clone https://github.com/loadingio/loading-bar
 cd loading-bar
 npm install
+nave auto 
 gulp
 ```
 
 Built files will be written into `./build` directory
 
+
+Releasing
+=============
+
+```
+./gen-dist.sh
+```
 
 LICENSE
 =============
