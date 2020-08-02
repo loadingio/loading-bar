@@ -682,7 +682,7 @@ wrap = function(content){
         return -c * 0.5 * (t * (t - 2) - 1) + b;
       },
       handler: function(time, doTransition){
-        var ref$, min, max, prec, dv, dt, dur, v, p, node, style, box, dir;
+        var ref$, min, max, prec, dv, dt, dur, v, decimals, p, node, style, box, dir;
         doTransition == null && (doTransition = true);
         if (this.time.src == null) {
           this.time.src = time;
@@ -699,7 +699,8 @@ wrap = function(content){
         }
         v >= min || (v = min);
         v <= max || (v = max);
-        text.textContent = v;
+        decimals = (prec + "").length - 1;
+        text.textContent = v.toFixed(decimals) + "";
         p = 100.0 * (v - min) / (max - min);
         if (isStroke) {
           node = path1;

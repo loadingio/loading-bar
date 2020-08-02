@@ -385,7 +385,8 @@ do ->
                 else if doTransition => v = Math.round(v)
                 v >?= min
                 v <?= max
-                text.textContent = v
+                decimals = "#{prec}".length - 1
+                text.textContent = "#{v.to-fixed decimals}"
                 p = 100.0 * (v - min ) / ( max - min )
                 if is-stroke =>
                     node = path1
