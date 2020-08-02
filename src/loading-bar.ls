@@ -146,6 +146,8 @@ do ->
             "max": 100
             "precision": 0
             "padding": undefined
+            'limit-top': 1.0
+            'limit-bottom': 0.0
 
         config["preset"] = root.attr("data-preset") or option["preset"]
 
@@ -388,6 +390,10 @@ do ->
                 decimals = "#{prec}".length - 1
                 text.textContent = "#{v.to-fixed decimals}"
                 p = 100.0 * (v - min ) / ( max - min )
+                t = 1 - config["limit-top"]
+                b = config["limit-bottom"]
+                p = 100 * ((v - min) * (1 - t - b)/ (max - min) + b)
+
                 if is-stroke =>
                     node = path1
                     style =

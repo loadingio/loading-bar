@@ -220,7 +220,9 @@ wrap = function(content){
       "min": 0,
       "max": 100,
       "precision": 0,
-      "padding": undefined
+      "padding": undefined,
+      'limit-top': 1.0,
+      'limit-bottom': 0.0
     };
     config["preset"] = root.attr("data-preset") || option["preset"];
     if (config.preset != null) {
@@ -682,7 +684,7 @@ wrap = function(content){
         return -c * 0.5 * (t * (t - 2) - 1) + b;
       },
       handler: function(time, doTransition){
-        var ref$, min, max, prec, dv, dt, dur, v, decimals, p, node, style, box, dir;
+        var ref$, min, max, prec, dv, dt, dur, v, decimals, p, t, b, node, style, box, dir;
         doTransition == null && (doTransition = true);
         if (this.time.src == null) {
           this.time.src = time;
@@ -702,6 +704,9 @@ wrap = function(content){
         decimals = (prec + "").length - 1;
         text.textContent = v.toFixed(decimals) + "";
         p = 100.0 * (v - min) / (max - min);
+        t = 1 - config["limit-top"];
+        b = config["limit-bottom"];
+        p = 100 * ((v - min) * (1 - t - b) / (max - min) + b);
         if (isStroke) {
           node = path1;
           style = {
