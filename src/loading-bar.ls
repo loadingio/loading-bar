@@ -318,8 +318,50 @@ do ->
                 @set v, true
                 @inited = true
             img.src = config.img
+
+            # add custom background image support 
+            if config.img2
+                if config["img-size"] =>
+                    ret = config["img-size"].split(\,)
+                    size = {width: +ret.0, height: +ret.1}
+                else size = {width: 100, height: 100}
+  
+                group.0 = domTree \g, rect: attr:
+                    x: 0, y: 0, width: 100, height: 100, mask: "url(\##{id.mask})", fill: config["fill-background"]
+                svg.querySelector 'mask image' .attrs do
+                    width: size.width, height: size.height
+                group.2 = domTree \g, image: attr:
+                    width: size.width, height: size.height, x: 0, y: 0, preserveAspectRatio: config["aspect-ratio"]
+                    #width: 100, height: 100, x: 0, y: 0, preserveAspectRatio: "xMidYMid"
+                    #"clip-path": if config.type == \fill => "url(\##{id.clip})" else ''
+                    "xlink:href": config.img2, class: \solid
+                img2 = new Image!
+                img2.addEventListener \load, ~>
+                    if config["img-size"] =>
+                        ret = config["img-size"].split(\,)
+                        size = {width: +ret.0, height: +ret.1}
+                    else if img2.width and img2.height => size = {width: img2.width, height: img2.height}
+                    else size = {width: 100, height: 100}
+                    svg.querySelector 'mask image' .attrs do
+                        width: size.width, height: size.height
+                    group.2.querySelector 'image' .attrs do
+                        width: size.width, height: size.height
+  
+                    @fit!
+  
+                    # image is load, so we set value again.
+                    # if we need transition - we have to clean value so it will be treated as 0.
+                    v = @value
+                    @value = undefined
+                    @set v, true
+                    @inited = true
+                img2.src = config.img2
             svg.appendChild group.0
+            if config.img2
+                # needs to be right after group.0
+                svg.appendChild group.2
             svg.appendChild group.1
+
         svg.attrs width: \100%, height: \100% #, viewBox: '0 0 100 100'
 
         @transition =
