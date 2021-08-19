@@ -4,10 +4,34 @@ html
   head
     +css("assets/lib/bootstrap/main/css/bootstrap.min.css")
     +css("assets/lib/@loadingio/bootstrap.ext/main/index.min.css")
+    +css("assets/lib/@loadingio/loading-bar/dev/loading-bar.min.css")
+    style(type="text/css"): :stylus
+      html,body { width: 100%; height: 100% }
+      .ldBar 
+        border: 1px solid #ccc
+        padding: 0px
+        box-shadow: 0 1px 3px rgba(0,0,0,.2)
+        width: 200px
+        svg
+          display: block
+        .ldBar-label
+          display: none
+
   body
     .w-1024.rwd.mx-auto.my-4
+      .ldBar(data-value="50",data-transition-in="true",data-stroke-width="10")
+      .ldBar(data-preset="circle",data-value="50",data-transition-in="true")
+      .ldBar(data-preset="rainbow",data-value="50",data-transition-in="true")
+      .ldBar(data-preset="energy",data-value="50",data-transition-in="true")
+      .ldBar(data-preset="stripe",data-value="50",data-transition-in="true")
+      .ldBar(data-preset="text",data-value="50",data-transition-in="true")
+      .ldBar(data-preset="line",data-value="50",data-transition-in="true")
+      .ldBar(data-preset="fan",data-value="50",data-transition-in="true")
+      .ldBar(data-preset="bubble",data-value="50",data-transition-in="true")
+
     +script("assets/lib/bootstrap.native/main/bootstrap-native-v4.min.js")
     +script("assets/lib/ldview/main/index.min.js")
     +script("assets/lib/ldcover/main/ldcv.min.js")
     +script("assets/lib/@loadingio/debounce.js/main/debounce.min.js")
     +script("assets/lib/proxise/main/proxise.min.js")
+    +script("assets/lib/@loadingio/loading-bar/dev/loading-bar.min.js")
