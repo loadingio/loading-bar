@@ -1,0 +1,13 @@
+doctype html
+html
+  include @/@loadingio/bootstrap.ext/dist/index.pug
+  head
+    +css("assets/lib/bootstrap/main/css/bootstrap.min.css")
+    +css("assets/lib/@loadingio/bootstrap.ext/main/index.min.css")
+  body
+    .w-1024.rwd.mx-auto.my-4
+    +script("assets/lib/bootstrap.native/main/bootstrap-native-v4.min.js")
+    +script("assets/lib/ldview/main/index.min.js")
+    +script("assets/lib/ldcover/main/ldcv.min.js")
+    +script("assets/lib/@loadingio/debounce.js/main/debounce.min.js")
+    +script("assets/lib/proxise/main/proxise.min.js")

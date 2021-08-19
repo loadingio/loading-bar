@@ -1,3 +1,4 @@
 build
 .*.swp
 node_modules
+web/static/assets/lib
