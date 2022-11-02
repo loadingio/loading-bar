@@ -23,7 +23,7 @@
     "browserify": "^13.1.1",
     "browserify-livescript": "git+https://github.com/ceremcem/browserify-livescript.git",
     "globby": "^6.1.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-cached": "^1.1.1",
     "gulp-concat": "^2.6.1",
     "gulp-flatten": "^0.3.1",
