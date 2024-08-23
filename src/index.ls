@@ -9,6 +9,11 @@ raf =
       tbr = true
       for g,v of o.vs =>
         if !v.time? => v.time = t
+        if v.paused == true and !v.paused-time => v.paused-time = t
+        if v.paused => continue
+        if v.paused-time =>
+          v.time += (t - v.paused-time)
+          delete v.paused-time
         v.progress = ((t - v.time) / (1000 * (v.dur or o.dur or 1))) <? 1
         v.cur = (v.des - v.src) * v.progress + v.src
         if v.progress < 1 or v.cur == v.des => tbr = false
@@ -42,6 +47,9 @@ ldbar = (root, o = {}) ->
 
 ldbar.prototype = Object.create(Object.prototype) <<<
   fit: ->
+  pause: (o = true) -> for k,v of @_a.vs => v.paused = o
+  unpause: -> @pause false; raf.add @
+  end: -> for k,v of @_a.vs => v.src = v.cur = v.des
   set: (v, o = {}) ->
     if typeof(v) != \object => v = {default: if isNaN(v) => ((@_v or {}).default or 0) else v}
     @_v = (@_v or {}) <<< v

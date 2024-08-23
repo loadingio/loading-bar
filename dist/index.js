@@ -340,6 +340,16 @@ raf = {
           if (v.time == null) {
             v.time = t;
           }
+          if (v.paused === true && !v.pausedTime) {
+            v.pausedTime = t;
+          }
+          if (v.paused) {
+            continue;
+          }
+          if (v.pausedTime) {
+            v.time += t - v.pausedTime;
+            delete v.pausedTime;
+          }
           v.progress = (ref2$ = (t - v.time) / (1000 * (v.dur || o.dur || 1))) < 1 ? ref2$ : 1;
           v.cur = (v.des - v.src) * v.progress + v.src;
           if (v.progress < 1 || v.cur === v.des) {
@@ -408,7 +418,7 @@ ldbar = function(root, o){
           'default': 0
         };
   this._a = {
-    dur: 0.5,
+    dur: 1,
     vs: {},
     hdr: function(){
       return this$._root.textContent = this$._a.vs['default'].cur.toFixed(2);
@@ -417,7 +427,25 @@ ldbar = function(root, o){
   this.set(v);
   return this;
 };
-ldbar.prototype = (ref$ = Object.create(Object.prototype), ref$.fit = function(){}, ref$.set = function(v, o){
+ldbar.prototype = (ref$ = Object.create(Object.prototype), ref$.fit = function(){}, ref$.pause = function(o){
+  var k, ref$, v, results$ = [];
+  o == null && (o = true);
+  for (k in ref$ = this._a.vs) {
+    v = ref$[k];
+    results$.push(v.paused = o);
+  }
+  return results$;
+}, ref$.unpause = function(){
+  this.pause(false);
+  return raf.add(this);
+}, ref$.end = function(){
+  var k, ref$, v, results$ = [];
+  for (k in ref$ = this._a.vs) {
+    v = ref$[k];
+    results$.push(v.src = v.cur = v.des);
+  }
+  return results$;
+}, ref$.set = function(v, o){
   var k, u, ov;
   o == null && (o = {});
   if (typeof v !== 'object') {
