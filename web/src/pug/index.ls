@@ -1,15 +1,16 @@
 <-(->it.apply {}) _
 
 ld$.find(\.ldBar).map ->
-  console.log it
-  bar = new ldbar it, value: Math.random!
+  bar = new ldbar it, value: {a: Math.random!, b: 0}
   debounce 1500
     .then ->
-      bar.set 1
+      bar.set {a: 1, b: 0}
       debounce 200
     .then ->
       bar.pause!
       debounce 1000
     .then ->
       bar.unpause!
-      #bar.set Math.random!, {animate: false}
+      debounce 1000
+    .then ->
+      bar.set {a: 1, b: 1}, {animate: false}

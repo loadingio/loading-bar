@@ -421,7 +421,7 @@ ldbar = function(root, o){
     dur: 1,
     vs: {},
     hdr: function(){
-      return this$._root.textContent = this$._a.vs['default'].cur.toFixed(2);
+      return this$._root.textContent = this$._a.vs.a.cur.toFixed(2) + " / " + this$._a.vs.b.cur.toFixed(2);
     }
   };
   this.set(v);

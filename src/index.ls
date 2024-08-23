@@ -41,7 +41,7 @@ ldbar = (root, o = {}) ->
   @_a =
     dur: 1
     vs: {}
-    hdr: ~> @_root.textContent = (@_a.vs.default.cur).toFixed(2)
+    hdr: ~> @_root.textContent = (@_a.vs.a.cur).toFixed(2) + " / " + (@_a.vs.b.cur).toFixed(2)
   @set v
   @
 
