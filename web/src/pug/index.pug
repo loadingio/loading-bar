@@ -1,21 +1,13 @@
 doctype html
 html
-  include @/@loadingio/bootstrap.ext/dist/index.pug
+  include @/@loadingio/bootstrap.ext/index.pug
   head
-    +css("assets/lib/bootstrap/main/css/bootstrap.min.css")
-    +css("assets/lib/@loadingio/bootstrap.ext/main/index.min.css")
-    +css("assets/lib/@loadingio/loading-bar/dev/loading-bar.min.css")
-    style(type="text/css"): :stylus
-      html,body { width: 100%; height: 100% }
-      .ldBar 
-        border: 1px solid #ccc
-        padding: 0px
-        box-shadow: 0 1px 3px rgba(0,0,0,.2)
-        width: 200px
-        svg
-          display: block
-        .ldBar-label
-          display: none
+    +css([
+      {name: "bootstrap", path: "dist/css/bootstrap.min.css"},
+      {name: "@loadingio/bootstrap.ext"},
+      {name: "@loadingio/loading-bar", version: "dev"}
+    ])
+    style(type="text/css"): include:stylus index.styl
 
   body
     .w-1024.rwd.mx-auto.my-4
@@ -28,10 +20,13 @@ html
       .ldBar(data-preset="line",data-value="50",data-transition-in="true")
       .ldBar(data-preset="fan",data-value="50",data-transition-in="true")
       .ldBar(data-preset="bubble",data-value="50",data-transition-in="true")
-
-    +script("assets/lib/bootstrap.native/main/bootstrap-native-v4.min.js")
-    +script("assets/lib/ldview/main/index.min.js")
-    +script("assets/lib/ldcover/main/ldcv.min.js")
-    +script("assets/lib/@loadingio/debounce.js/main/debounce.min.js")
-    +script("assets/lib/proxise/main/proxise.min.js")
-    +script("assets/lib/@loadingio/loading-bar/dev/loading-bar.min.js")
+    +script([
+      {name: "bootstrap.native", path: "dist/bootstrap-native-v4.min.js"},
+      {name: "@loadingio/ldquery"},
+      {name: "ldview"},
+      {name: "ldcover"},
+      {name: "@loadingio/debounce.js"},
+      {name: "proxise"},
+      {name: "@loadingio/loading-bar", version: "dev"}
+    ])
+    script(type="module"): include:lsc index.ls

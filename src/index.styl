@@ -1,0 +1,16 @@
+.ldBar, .ldbar
+  position: relative
+  &.label-center > .ldBar-label, &.label-center > .ldbar-label
+    position: absolute
+    top: 50%
+    left: 50%
+    transform: translate(-50%,-50%)
+    text-shadow: 0 0 3px rgba(255,255,255,1)
+
+.ldBar-label:after, .ldbar-label:after
+  content: "%"
+  display: inline
+
+.ldBar.no-percent, .ldbar.no-percent
+  .ldBar-label:after, .ldbar-label:after
+    content: ""

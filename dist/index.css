@@ -1,0 +1,25 @@
+.ldBar,
+.ldbar {
+  position: relative;
+}
+.ldBar.label-center > .ldBar-label,
+.ldbar.label-center > .ldBar-label,
+.ldBar.label-center > .ldbar-label,
+.ldbar.label-center > .ldbar-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-shadow: 0 0 3px #fff;
+}
+.ldBar-label:after,
+.ldbar-label:after {
+  content: "%";
+  display: inline;
+}
+.ldBar.no-percent .ldBar-label:after,
+.ldbar.no-percent .ldBar-label:after,
+.ldBar.no-percent .ldbar-label:after,
+.ldbar.no-percent .ldbar-label:after {
+  content: "";
+}

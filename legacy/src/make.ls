@@ -1,9 +1,8 @@
-wrap = (v) -> "data:image/svg+xml;base64," + btoa(v)
-make =
-  head: (vb) ->
+make = do
+  head: (viewBox) ->
     """
     <?xml version="1.0" encoding="utf-8"?>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="#vb">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="#viewBox">
     """
   gradient: (dir = 45, dur = 1, ...colors) ->
     ret = [@head "0 0 100 100"]
@@ -26,7 +25,7 @@ make =
       to="0,0" dur="#{dur}s" repeatCount="indefinite"/></rect></svg>
       """
     wrap ret.join("")
-  stripe: (c1 = \#b4b4b4, c2 = \#e6e6e6, dur = 1) ->
+  stripe: (c1=\#b4b4b4, c2=\#e6e6e6, dur = 1) ->
     ret = [@head "0 0 100 100"]
     p = ["""
     <polygon fill="#c1" points="#{-90 + i * 20},100 #{-100 + i * 20},100 #{-60 + i * 20},0 #{-50 + i * 20},0 "/>
@@ -35,9 +34,9 @@ make =
     #{@head '0 0 100 100'}
     <rect fill="#c2" width="100" height="100"/>
     <g>
-    <g>#p</g>
-    <animateTransform attributeName="transform" type="translate"
-    from="0,0" to="20,0" dur="#{dur}s" repeatCount="indefinite"/>
+      <g>#p</g>
+      <animateTransform attributeName="transform" type="translate"
+      from="0,0" to="20,0" dur="#{dur}s" repeatCount="indefinite"/>
     </g></svg>"""
     wrap ret
   bubble: (c1 = \#39d, c2 = \#9cf, count = 15, dur = 1, size = 6, sw=1) ->
