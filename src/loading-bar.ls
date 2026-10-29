@@ -108,18 +108,14 @@ do ->
         domTree = (n,o) ->
             n = newNode n
             for k,v of o => if k != \attr => n.appendChild domTree(k, v or {})
-            n.attrs(o.attr or {})
+            attrs n, (o.attr or {})
             n
         newNode = (n) -> document.createElementNS "http://www.w3.org/2000/svg", n
-        document.body.__proto__.__proto__.__proto__
-            ..text = (t) -> @appendChild document.createTextNode(t)
-            ..attrs = (o) -> for k,v of o =>
-                ret = /([^:]+):([^:]+)/.exec(k)
-                if !ret or !xmlns[ret.1] => @setAttribute k, v
-                else @setAttributeNS xmlns[ret.1], k, v
-            ..styles = (o) -> for k,v of o => @style[k] = v
-            ..append = (n) -> @appendChild r = document.createElementNS "http://www.w3.og/2000/svg", n
-            ..attr = (n,v) -> if v? => @setAttribute n, v else @getAttribute n
+        attrs = (n, o) -> for k,v of o =>
+            ret = /([^:]+):([^:]+)/.exec(k)
+            if !ret or !xmlns[ret.1] => n.setAttribute k, v
+            else n.setAttributeNS xmlns[ret.1], k, v
+        attr = (n, k, v) -> if v? => n.setAttribute k, v else n.getAttribute k
         config =
             "type": 'stroke'
             "img": ''
@@ -147,16 +143,16 @@ do ->
             "precision": 0
             "padding": undefined
 
-        config["preset"] = root.attr("data-preset") or option["preset"]
+        config["preset"] = attr(root, "data-preset") or option["preset"]
 
         if config.preset?
             # use the default preset
             config <<< presets[config.preset]
 
         # overwrite if there are arguments passed via data-* attributes
-        for attr of config
-            if that = root.attr "data-#{attr}"
-                config[attr] = that
+        for key of config
+            if that = attr root, "data-#{key}"
+                config[key] = that
 
         config <<< option
         if config.img => config.path = null
@@ -228,13 +224,13 @@ do ->
             ) * 1.5
             if config["padding"]? => d = +config["padding"]
 
-            svg.attrs viewBox: [box.x - d, box.y - d, box.width + d * 2, box.height + d * 2].join(" ")
+            attrs svg, viewBox: [box.x - d, box.y - d, box.width + d * 2, box.height + d * 2].join(" ")
             if config["set-dim"] => <[width height]>.map ~> if !root.style[it] or @fit[it] =>
               root.style[it] = "#{box[it] + d * 2}px"
               @fit[it] = true
 
             rect = group.0.querySelector \rect
-            if rect => rect.attrs do
+            if rect => attrs rect, do
                 x: box.x - d, y: box.y - d, width: box.width + d * 2, height: box.height + d * 2
 
         if config.path =>
@@ -256,7 +252,7 @@ do ->
             svg.appendChild group.1
             path0 = group.0.querySelector (if is-stroke => \path else \rect)
             path1 = group.1.querySelector \path
-            if is-stroke => path1.attrs fill: \none
+            if is-stroke => attrs path1, fill: \none
 
             patimg = svg.querySelector 'pattern image'
             img = new Image!
@@ -264,19 +260,19 @@ do ->
                 box = if config["pattern-size"] => {width: +that, height: +that}
                 else if img.width and img.height => {width: img.width, height: img.height}
                 else {width: 300, height: 300}
-                svg.querySelector \pattern .attrs {width: box.width, height: box.height}
-                patimg.attrs {width: box.width, height: box.height}
+                attrs svg.querySelector(\pattern), {width: box.width, height: box.height}
+                attrs patimg, {width: box.width, height: box.height}
             if /.+\..+|^data:/.exec(if !is-stroke => config.fill else config.stroke) =>
                 img.src = if !is-stroke => config.fill else config.stroke
-                patimg.attrs "xlink:href": img.src #if !is-stroke => config.fill else config.stroke
+                attrs patimg, "xlink:href": img.src #if !is-stroke => config.fill else config.stroke
 
             if is-stroke =>
-                path0.attrs stroke: config["stroke-trail"], "stroke-width": config["stroke-trail-width"]
-                path1.attrs do
+                attrs path0, stroke: config["stroke-trail"], "stroke-width": config["stroke-trail-width"]
+                attrs path1, do
                     "stroke-width": config["stroke-width"]
                     stroke: if /.+\..+|^data:/.exec(config.stroke) => "url(\##{id.pattern})" else config.stroke
             if config.fill and !is-stroke =>
-                path1.attrs do
+                attrs path1, do
                     fill: if /.+\..+|^data:/.exec(config.fill) => "url(\##{id.pattern})" else config.fill
 
             length = path1.getTotalLength!
@@ -290,7 +286,7 @@ do ->
 
             group.0 = domTree \g, rect: attr:
                 x: 0, y: 0, width: 100, height: 100, mask: "url(\##{id.mask})", fill: config["fill-background"]
-            svg.querySelector 'mask image' .attrs do
+            attrs svg.querySelector('mask image'), do
                 width: size.width, height: size.height
             group.1 = domTree \g, image: attr:
                 width: size.width, height: size.height, x: 0, y: 0, preserveAspectRatio: config["aspect-ratio"]
@@ -304,9 +300,9 @@ do ->
                     size = {width: +ret.0, height: +ret.1}
                 else if img.width and img.height => size = {width: img.width, height: img.height}
                 else size = {width: 100, height: 100}
-                svg.querySelector 'mask image' .attrs do
+                attrs svg.querySelector('mask image'), do
                     width: size.width, height: size.height
-                group.1.querySelector 'image' .attrs do
+                attrs group.1.querySelector('image'), do
                     width: size.width, height: size.height
 
                 @fit!
@@ -320,7 +316,7 @@ do ->
             img.src = config.img
             svg.appendChild group.0
             svg.appendChild group.1
-        svg.attrs width: \100%, height: \100% #, viewBox: '0 0 100 100'
+        attrs svg, width: \100%, height: \100% #, viewBox: '0 0 100 100'
 
         @transition =
             value:
@@ -371,7 +367,7 @@ do ->
                         x: box.x + box.width * (100 - p) * 0.01
                         width: box.width * p * 0.01
                     node = svg.querySelector \rect
-                node.attrs style
+                attrs node, style
                 if dt >= dur => delete @time.src; return false
                 return true
             start: (src, des, doTransition) ->

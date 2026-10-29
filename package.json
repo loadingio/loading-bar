@@ -1,6 +1,6 @@
 {
   "name": "@loadingio/loading-bar",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": " ====== Progress Bar Library by loading.io ====== ",
   "main": "lib/loading-bar.js",
   "scripts": {
